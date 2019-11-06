@@ -56,7 +56,7 @@ function resetDemon($user) {
 	demon.x = 32 + (Math.random() * (1000 - 64)); //canvas.width = map.width
 	demon.y = 32 + (Math.random() * (1000 - 64)); //canvas.height = map.height
 	//Increment the player's score
-	sparational.starspar.query("UPDATE starsparActiveObjects SET x = '"+heero.x+"', y='"+heero.y+"' WHERE player = '"+$user+"';").then(([$PagesResults, metadata]) => {
+	sparational.starspar.query("UPDATE starsparLocations SET x = '"+demon.x+"', y='"+demon.y+"' WHERE player = '"+$user+"';").then(([$PagesResults, metadata]) => {
   
 	}).catch(function(err) {
 		writeLog("Invalid resetDemon attempt: " + err.message)
