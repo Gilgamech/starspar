@@ -127,7 +127,7 @@ if (request.method == "GET") {
 	&& player.y <= (demon.y + 32)
 	&& demon.y <= (player.y + 32)) {
 		// choose & store demon location
-		resetDemon();
+		resetDemon($user);
 	};//end if player
 	//Send back all object locations and player scores for the player's map.
 	sparational.starspar.query("SELECT * from starsparLocations where map = '"+map+"')").then(([$ScoresResults, metadata]) => {
