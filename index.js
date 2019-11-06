@@ -112,8 +112,8 @@ if (request.method == "GET") {
 	player = player.replace(/~~/g,"#")
 	player = player.replace(/%20/g,'')
 	player = player.replace(/%22/g,'"')
-	console.log(player)
 	player = JSON.parse(player)
+	console.log(player.x)
 	// Store player location
 	sparational.starspar.query("UPDATE starsparLocations (x, y) VALUES ('"+player.x+"','"+player.y+"') where player='"+$user+"'").then(([$PagesResults, metadata]) => {
 	//path="starspar?username=Gilgamech&SessionID=ue1z4ug6ezmuedbo6r&SessionKey=ivkqf1q1v5i5qgds4i&heero={%22x%22:1,%22y%22:1,%22speed%22:250}"
@@ -145,7 +145,7 @@ if (request.method == "GET") {
 		}//end if user
 		}).catch(function(err) {
 			writeLog('Session error: '+err.message); 
-			response.end(err.message)
+			response.end('Session error: '+err.message)
 		});//end Session query
 	writeLog('Invalid request.'); 
 	response.end('Invalid request.')
