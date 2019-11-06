@@ -109,7 +109,7 @@ if (request.method == "GET") {
 	$sessionID = $sessionID.replace(/;/g,"")
 
 	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
-console.log(JSON.stringify($SessionResults)
+console.log(JSON.stringify($SessionResults))
 	if ($user==$SessionResults[0].sessionuser) {
 
 // Receive player keystrokes
