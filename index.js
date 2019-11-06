@@ -133,7 +133,7 @@ if (request.method == "GET") {
 	
 	//Send back all object locations and player scores for the player's map.
 	var map = 'noob'
-	sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map+"')").then(([$ScoresResults, metadata]) => {
+	sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map+"'").then(([$ScoresResults, metadata]) => {
 		response.end(refreshKey($user)+":"+JSON.stringify($ScoresResults))
 	}).catch(function(err) {
 			writeLog("Invalid SELECT starsparLocations attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
