@@ -130,7 +130,7 @@ if (request.method == "GET") {
 		resetDemon($user);
 	};//end if player
 	//Send back all object locations and player scores for the player's map.
-	sparational.starspar.query("SELECT * from starsparLocations where map = '"+map+"')").then(([$ScoresResults, metadata]) => {
+	sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map+"')").then(([$ScoresResults, metadata]) => {
 		response.end(refreshKey($user)+":"+JSON.stringify($ScoresResults))
 	}).catch(function(err) {
 			writeLog("Invalid starspar response attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
