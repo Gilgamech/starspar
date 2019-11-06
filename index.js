@@ -97,7 +97,7 @@ if (request.method == "GET") {
 	})
 
 } else if (request.method == "POST") {
-    if (request.url.indexOf("starspar?") > 0) {/starspar from starspar
+    if (request.url.indexOf("starspar?") > 0) {//starspar from starspar
 	var inputPacket = request.url.split("starspar?")[1].split("&")
 	var $user = inputPacket[0].split("=")[1]
 	var $sessionID = inputPacket[1].split("=")[1]
