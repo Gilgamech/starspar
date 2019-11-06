@@ -98,10 +98,10 @@ if (request.method == "GET") {
 	var $user = inputPacket[0].split("=")[1]
 	var $sessionID = inputPacket[1].split("=")[1]
 	var $sessionKey = inputPacket[2].split("=")[1]
+	$sessionID = $sessionID.replace(/;/g,"")
 
-		$sessionID = $sessionID.replace(/;/g,"")
-			if ($user==$SessionResults[0].sessionuser) {
 	sparational.logging.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
+	if ($user==$SessionResults[0].sessionuser) {
 	//Tables - Player, Ship
 // Receive player keystrokes
 	player = request.url.split("/&heero=?")[1].split("&")[3].split("=")[1]
@@ -114,7 +114,7 @@ if (request.method == "GET") {
 	}).catch(function(err) {
 			writeLog("Invalid starspar starspar attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
 		response.end("Invalid starspar starspar attempt.") 
-	})
+	})//end update loc
 
 // perform collision calculations - Are they touching?			
 	// If collision
@@ -133,7 +133,6 @@ if (request.method == "GET") {
 			response.end("Invalid starspar starspar attempt.") 
 		})//end Pages query
 	}else{
-	}
 	//Update player location
 	sparational.starspar.query("SELECT * from starsparMap where map = '"+map+"')").then(([$MapLocResults, metadata]) => {
 		sparational.starspar.query("SELECT * from starsparObjects where map = '"+map+"')").then(([$ScoresResults, metadata]) => {
