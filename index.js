@@ -53,8 +53,8 @@ function refreshKey($user) {
 
 function resetDemon($user) {
 	// Throw the demon somewhere on the screen randomly
-	demon.x = 32 + (Math.random() * (1000 - 64)); //canvas.width = map.width
-	demon.y = 32 + (Math.random() * (1000 - 64)); //canvas.height = map.height
+	demon.x = Math.round(32 + (Math.random() * (1000 - 64)),4); //canvas.width = map.width
+	demon.y = Math.round(32 + (Math.random() * (1000 - 64)),4); //canvas.height = map.height
 	//Increment the player's score
 	sparational.starspar.query("UPDATE starsparLocations SET locx = '"+demon.x+"', locy='"+demon.y+"' WHERE objectName = 'demon';").then(([$PagesResults, metadata]) => {
   
