@@ -112,6 +112,7 @@ if (request.method == "GET") {
 	player = player.replace(/~~/g,"#")
 	player = player.replace(/%20/g,'')
 	player = player.replace(/%22/g,'"')
+	console.log(player)
 	player = JSON.parse(player)
 	// Store player location
 	sparational.starspar.query("UPDATE starsparLocations (x, y, score) VALUES ('"+player.x+"','"+player.y+"') where player='"+$user+"'").then(([$PagesResults, metadata]) => {
@@ -145,9 +146,9 @@ if (request.method == "GET") {
 			console.log('Sites error: '+err.message); 
 			response.end(err.message)
 		});//end Session query
+	console.log('Invalid request.'); 
 
     }; // end request url indexOf
-
 
 
 
