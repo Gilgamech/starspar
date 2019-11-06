@@ -108,7 +108,7 @@ if (request.method == "GET") {
 	if ($user==$SessionResults[0].sessionuser) {
 
 // Receive player keystrokes
-	player = request.url.split("/&heero=?")[1].split("&")[3].split("=")[1]
+	player = inputPacket[3].split("=")[1]
 	player = player.replace(/~~/g,"#")
 	player = player.replace(/%20/g,'')
 	player = player.replace(/%22/g,'"')
@@ -144,7 +144,7 @@ if (request.method == "GET") {
 			response.end("Invalid starspar attempt: bad session key for user: " + $user + " with sessionID-to-swim: " + swimmersEncode($sessionID)) 
 		}//end if user
 		}).catch(function(err) {
-			writeLog('Sites error: '+err.message); 
+			writeLog('Session error: '+err.message); 
 			response.end(err.message)
 		});//end Session query
 	writeLog('Invalid request.'); 
