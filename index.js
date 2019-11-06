@@ -55,8 +55,14 @@ function resetDemon($user) {
 	// Throw the demon somewhere on the screen randomly
 	demon.x = Math.round(32 + (Math.random() * (1000 - 64)),4); //canvas.width = map.width
 	demon.y = Math.round(32 + (Math.random() * (1000 - 64)),4); //canvas.height = map.height
-	//Increment the player's score
 	sparational.starspar.query("UPDATE starsparLocations SET locx = '"+demon.x+"', locy='"+demon.y+"' WHERE objectName = 'demon';").then(([$PagesResults, metadata]) => {
+  
+	}).catch(function(err) {
+		writeLog("Invalid resetDemon attempt: " + err.message)
+		console.log("Invalid resetDemon attempt.") 
+	})//end Pages query
+	//Increment the player's score
+	sparational.starspar.query("UPDATE starsparLocations SET score = (SELECT score from starsparLocations WHERE objectName = '"+$user+"')+1 WHERE objectName = '"+$user+"';").then(([$PagesResults, metadata]) => {
   
 	}).catch(function(err) {
 		writeLog("Invalid resetDemon attempt: " + err.message)
@@ -92,7 +98,6 @@ if (request.method == "GET") {
 	})
 
 } else if (request.method == "POST") {
-
     if (request.url.indexOf("/starspar?") > 0) {//starspar from starspar
 	var inputPacket = request.url.split("/starspar?")[1].split("&")
 	var $user = inputPacket[0].split("=")[1]
