@@ -107,6 +107,7 @@ if (request.method == "GET") {
 	var $sessionID = inputPacket[1].split("=")[1]
 	var $sessionKey = inputPacket[2].split("=")[1]
 	$sessionID = $sessionID.replace(/;/g,"")
+console.log(JSON.stringify(inputPacket))
 
 	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
 console.log(JSON.stringify($SessionResults))
