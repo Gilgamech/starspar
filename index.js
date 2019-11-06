@@ -113,7 +113,6 @@ if (request.method == "GET") {
 	player = player.replace(/%20/g,'')
 	player = player.replace(/%22/g,'"')
 	player = JSON.parse(player)
-	console.log(player.x)
 	// Store player location
 	sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"'").then(([$PagesResults, metadata]) => {
 	//path="starspar?username=Gilgamech&SessionID=ue1z4ug6ezmuedbo6r&SessionKey=ivkqf1q1v5i5qgds4i&heero={%22x%22:1,%22y%22:1,%22speed%22:250}"
@@ -130,8 +129,10 @@ if (request.method == "GET") {
 	&& demon.y <= (player.y + 32)) {
 		// choose & store demon location
 		resetDemon($user);
-	};//end if player
+	};//end collision calculations
+	
 	//Send back all object locations and player scores for the player's map.
+	var map = 'noob'
 	sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map+"')").then(([$ScoresResults, metadata]) => {
 		response.end(refreshKey($user)+":"+JSON.stringify($ScoresResults))
 	}).catch(function(err) {
