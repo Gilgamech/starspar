@@ -61,9 +61,8 @@ function resetDemon($user) {
 		writeLog("Invalid resetDemon attempt: " + err.message)
 		console.log("Invalid resetDemon attempt.") 
 	})//end Pages query
-	//Increment the player's score
+	//Increment & store the player's score
 	sparational.starspar.query("UPDATE starsparLocations SET score = (SELECT score from starsparLocations WHERE objectName = '"+$user+"')+1 WHERE objectName = '"+$user+"';").then(([$PagesResults, metadata]) => {
-  
 	}).catch(function(err) {
 		writeLog("Invalid resetDemon attempt: " + err.message)
 		console.log("Invalid resetDemon attempt.") 
@@ -129,27 +128,13 @@ if (request.method == "GET") {
 	&& demon.y <= (player.y + 32)) {
 		// choose & store demon location
 		resetDemon();
-		// increment player score
-		// store player score
-		sparational.starspar.query("UPDATE starsparShips (x, y, score) VALUES ('"+player.x+"','"+player.y+",(Select score from starsparShip where player = "+$user+"')+1)").then(([$PagesResults, metadata]) => {
-			
-		}).catch(function(err) {
-			writeLog("Invalid starspar starspar attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
-			response.end("Invalid starspar starspar attempt.") 
-		})//end Pages query
 	};//end if player
-	//Update player location
-	sparational.starspar.query("SELECT * from starsparMap where map = '"+map+"')").then(([$MapLocResults, metadata]) => {
-		sparational.starspar.query("SELECT * from starsparObjects where map = '"+map+"')").then(([$ScoresResults, metadata]) => {
-			//Send back all object locations and player scores for the player's map.
-			response.end(refreshKey($user)+":"+JSON.stringify($MapLocResults)+":"+JSON.stringify($ScoresResults))
-		}).catch(function(err) {
-				writeLog("Invalid starspar starspar attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
-			response.end("Invalid starspar starspar attempt.") 
-		})
+	//Send back all object locations and player scores for the player's map.
+	sparational.starspar.query("SELECT * from starsparLocations where map = '"+map+"')").then(([$ScoresResults, metadata]) => {
+		response.end(refreshKey($user)+":"+JSON.stringify($ScoresResults))
 	}).catch(function(err) {
-			writeLog("Invalid starspar starspar attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
-		response.end("Invalid starspar starspar attempt.") 
+			writeLog("Invalid starspar response attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
+		response.end("Invalid starspar response attempt.") 
 	})
 	
 		} else {
@@ -157,9 +142,8 @@ if (request.method == "GET") {
 			response.end("Invalid starspar attempt: bad session key for user: " + $user + " with sessionID-to-swim: " + swimmersEncode($sessionID)) 
 		}//end if user
 		}).catch(function(err) {
-			console.log('Sites error: '); 
-			console.log(err); 
-	response.end(JSON.stringify(err))
+			console.log('Sites error: '+err.message); 
+			response.end(err.message)
 		});//end Session query
 
     }; // end request url indexOf
@@ -178,7 +162,7 @@ if (request.method == "GET") {
 //}
 
 //{ Run Once
-resetDemon();
+resetDemon('demon');
 writeLog('Service is running on port ' + $servicePort);
 console.log($serviceName + ' is running on port ' + $servicePort);
 //}
