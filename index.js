@@ -132,7 +132,7 @@ if (request.method == "GET") {
 			writeLog("Invalid starspar starspar attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
 			response.end("Invalid starspar starspar attempt.") 
 		})//end Pages query
-	}else{
+	};//end if player
 	//Update player location
 	sparational.starspar.query("SELECT * from starsparMap where map = '"+map+"')").then(([$MapLocResults, metadata]) => {
 		sparational.starspar.query("SELECT * from starsparObjects where map = '"+map+"')").then(([$ScoresResults, metadata]) => {
