@@ -83,8 +83,8 @@ function writeLog($msg) {
 $http.createServer(function (request, response) {
 	response.setHeader('Access-Control-Allow-Origin', "*")
 	try {
-	writeLog(request.method +" request from address:" + request.connection.remoteAddress + " on path: "+request.connection.remotePort+" for path " + request.url)
 if (request.method == "GET") {
+	writeLog(request.method +" request from address:" + request.connection.remoteAddress + " on path: "+request.connection.remotePort+" for path " + request.url)
 
 	sparational.html("starspar.gilgamech.com",function($callback) {
 		//Need to add login to page.
