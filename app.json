@@ -1,0 +1,8 @@
+{
+  "name": "starspar",
+  "description": "a fun HTML5 game",
+  "repository": "https://github.com/Gilgamech/starspar",
+  "logo": "https://cdn.rawgit.com/heroku/node-js-getting-started/master/public/node.svg",
+  "keywords": ["node", "html5", "postgres", "game"],
+  "image": "heroku/nodejs"
+}
