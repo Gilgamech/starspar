@@ -47,7 +47,7 @@ function refreshKey($user) {
 	$sessionID = getBadPW()
 	$sessionKey = getBadPW()
 	$output = ""+$user+":" + $sessionID +":" + $sessionKey 
-	sparational.logging.query("UPDATE Sessions SET logintime = current_timestamp, sessionid = '"+$sessionID+"', sessionkey = '"+$sessionKey+"' WHERE sessionuser='"+$user+"';INSERT INTO Sessions (sessionuser, sessionid,sessionkey) SELECT '"+$user+"','"+$sessionID+"','"+$sessionKey+"' WHERE NOT EXISTS (SELECT 1 FROM Sessions WHERE sessionuser='"+$user+"');")
+	sparational.sequelize.query("UPDATE Sessions SET logintime = current_timestamp, sessionid = '"+$sessionID+"', sessionkey = '"+$sessionKey+"' WHERE sessionuser='"+$user+"';INSERT INTO Sessions (sessionuser, sessionid,sessionkey) SELECT '"+$user+"','"+$sessionID+"','"+$sessionKey+"' WHERE NOT EXISTS (SELECT 1 FROM Sessions WHERE sessionuser='"+$user+"');")
 	return $user + ":" + $sessionID + ":" + $sessionKey
 };
 
@@ -56,7 +56,7 @@ function resetDemon($user) {
 	demon.x = 32 + (Math.random() * (1000 - 64)); //canvas.width = map.width
 	demon.y = 32 + (Math.random() * (1000 - 64)); //canvas.height = map.height
 	//Increment the player's score
-	sparational.starspar.query("UPDATE starsparLocations SET x = '"+demon.x+"', y='"+demon.y+"' WHERE player = '"+$user+"';").then(([$PagesResults, metadata]) => {
+	sparational.starspar.query("UPDATE starsparLocations SET x = '"+demon.x+"', y='"+demon.y+"' WHERE player = 'demon';").then(([$PagesResults, metadata]) => {
   
 	}).catch(function(err) {
 		writeLog("Invalid resetDemon attempt: " + err.message)
@@ -71,7 +71,7 @@ function writeLog($msg) {
 	if($msg.length > 254) {
 	   $msg = $msg.substring(0, 251)+"...";
 	}
-	sparational.logging.query("INSERT INTO Logs (servicename, err) SELECT '"+$serviceName+"','"+$msg+"'").then(([$PagesResults, metadata]) => {
+	sparational.sequelize.query("INSERT INTO Logs (servicename, err) SELECT '"+$serviceName+"','"+$msg+"'").then(([$PagesResults, metadata]) => {
 	}).catch(function(err) {
 		console.log('writeLog Insert error: '); 
 		console.log(err); 
@@ -100,7 +100,7 @@ if (request.method == "GET") {
 	var $sessionKey = inputPacket[2].split("=")[1]
 	$sessionID = $sessionID.replace(/;/g,"")
 
-	sparational.logging.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
+	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
 	if ($user==$SessionResults[0].sessionuser) {
 	//Tables - Player, Ship
 // Receive player keystrokes
