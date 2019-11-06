@@ -115,11 +115,11 @@ if (request.method == "GET") {
 	player = JSON.parse(player)
 	console.log(player.x)
 	// Store player location
-	sparational.starspar.query("UPDATE starsparLocations (x, y) VALUES ('"+player.x+"','"+player.y+"') where player='"+$user+"'").then(([$PagesResults, metadata]) => {
+	sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"'").then(([$PagesResults, metadata]) => {
 	//path="starspar?username=Gilgamech&SessionID=ue1z4ug6ezmuedbo6r&SessionKey=ivkqf1q1v5i5qgds4i&heero={%22x%22:1,%22y%22:1,%22speed%22:250}"
 	}).catch(function(err) {
-			writeLog("Invalid starspar starspar attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
-		response.end("Invalid starspar starspar attempt.") 
+			writeLog("Invalid UPDATE starsparLocations attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
+		response.end("Invalid UPDATE starsparLocations attempt.") 
 	})//end update loc
 
 // perform collision calculations - Are they touching?			
@@ -135,8 +135,8 @@ if (request.method == "GET") {
 	sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map+"')").then(([$ScoresResults, metadata]) => {
 		response.end(refreshKey($user)+":"+JSON.stringify($ScoresResults))
 	}).catch(function(err) {
-			writeLog("Invalid starspar response attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
-		response.end("Invalid starspar response attempt.") 
+			writeLog("Invalid SELECT starsparLocations attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
+		response.end("Invalid SELECT starsparLocations attempt.") 
 	})
 	
 		} else {
