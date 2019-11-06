@@ -47,7 +47,11 @@ function refreshKey($user) {
 	$sessionID = getBadPW()
 	$sessionKey = getBadPW()
 	$output = ""+$user+":" + $sessionID +":" + $sessionKey 
-	sparational.sequelize.query("UPDATE Sessions SET logintime = current_timestamp, sessionid = '"+$sessionID+"', sessionkey = '"+$sessionKey+"' WHERE sessionuser='"+$user+"';INSERT INTO Sessions (sessionuser, sessionid,sessionkey) SELECT '"+$user+"','"+$sessionID+"','"+$sessionKey+"' WHERE NOT EXISTS (SELECT 1 FROM Sessions WHERE sessionuser='"+$user+"');")
+	sparational.sequelize.query("UPDATE Sessions SET logintime = current_timestamp, sessionid = '"+$sessionID+"', sessionkey = '"+$sessionKey+"' WHERE sessionuser='"+$user+"';INSERT INTO Sessions (sessionuser, sessionid,sessionkey) SELECT '"+$user+"','"+$sessionID+"','"+$sessionKey+"' WHERE NOT EXISTS (SELECT 1 FROM Sessions WHERE sessionuser='"+$user+"');").catch(function(err) {
+		writeLog("Invalid refreshKey attempt: " + err.message)
+		console.log("Invalid refreshKey attempt.") 
+	})//end Pages query
+
 	return $user + ":" + $sessionID + ":" + $sessionKey
 };
 
