@@ -144,10 +144,11 @@ if (request.method == "GET") {
 			response.end("Invalid starspar attempt: bad session key for user: " + $user + " with sessionID-to-swim: " + swimmersEncode($sessionID)) 
 		}//end if user
 		}).catch(function(err) {
-			console.log('Sites error: '+err.message); 
+			writeLog('Sites error: '+err.message); 
 			response.end(err.message)
 		});//end Session query
-	console.log('Invalid request.'); 
+	writeLog('Invalid request.'); 
+	response.end('Invalid request.')
 
     }; // end request url indexOf
 
