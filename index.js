@@ -7,7 +7,8 @@ var sparational = require("sparational");
 var $serviceName = "StarSpar";
 var $servicePort = (process.env.PORT || 5010);
 var $hostName = (process.env.HOST || "localhost:"+$servicePort);
-sparational.sequelize = new sparational.Sequelize(process.env.DATABASE_URL || 'postgres://postgres:dbpasswd@127.0.0.1:5432/postgres', {logging: false});
+sparational.starspar = new sparational.Sequelize(process.env.DATABASE_URL || 'postgres://postgres:dbpasswd@127.0.0.1:5432/postgres', {logging: false});
+sparational.logging = new sparational.Sequelize(process.env.DATABASE_URL || 'postgres://postgres:dbpasswd@127.0.0.1:5432/postgres', {logging: false});
 var heero = {};
 var demon = {};
 //}
@@ -46,7 +47,7 @@ function refreshKey($user) {
 	$sessionID = getBadPW()
 	$sessionKey = getBadPW()
 	$output = ""+$user+":" + $sessionID +":" + $sessionKey 
-	sequelize.query("UPDATE Sessions SET logintime = current_timestamp, sessionid = '"+$sessionID+"', sessionkey = '"+$sessionKey+"' WHERE sessionuser='"+$user+"';INSERT INTO Sessions (sessionuser, sessionid,sessionkey) SELECT '"+$user+"','"+$sessionID+"','"+$sessionKey+"' WHERE NOT EXISTS (SELECT 1 FROM Sessions WHERE sessionuser='"+$user+"');")
+	sparational.logging.query("UPDATE Sessions SET logintime = current_timestamp, sessionid = '"+$sessionID+"', sessionkey = '"+$sessionKey+"' WHERE sessionuser='"+$user+"';INSERT INTO Sessions (sessionuser, sessionid,sessionkey) SELECT '"+$user+"','"+$sessionID+"','"+$sessionKey+"' WHERE NOT EXISTS (SELECT 1 FROM Sessions WHERE sessionuser='"+$user+"');")
 	return $user + ":" + $sessionID + ":" + $sessionKey
 };
 
@@ -55,7 +56,7 @@ function resetDemon($user) {
 	demon.x = 32 + (Math.random() * (1000 - 64)); //canvas.width = map.width
 	demon.y = 32 + (Math.random() * (1000 - 64)); //canvas.height = map.height
 	//Increment the player's score
-	sparational.sequelize.query("UPDATE starsparActiveObjects SET x = '"+heero.x+"', y='"+heero.y+"' WHERE player = '"+$user+"';").then(([$PagesResults, metadata]) => {
+	sparational.starspar.query("UPDATE starsparActiveObjects SET x = '"+heero.x+"', y='"+heero.y+"' WHERE player = '"+$user+"';").then(([$PagesResults, metadata]) => {
   
 	}).catch(function(err) {
 		writeLog("Invalid resetDemon attempt: " + err.message)
@@ -70,7 +71,7 @@ function writeLog($msg) {
 	if($msg.length > 254) {
 	   $msg = $msg.substring(0, 251)+"...";
 	}
-	sparational.sequelize.query("INSERT INTO Logs (servicename, err) SELECT '"+$serviceName+"','"+$msg+"'").then(([$PagesResults, metadata]) => {
+	sparational.logging.query("INSERT INTO Logs (servicename, err) SELECT '"+$serviceName+"','"+$msg+"'").then(([$PagesResults, metadata]) => {
 	}).catch(function(err) {
 		console.log('writeLog Insert error: '); 
 		console.log(err); 
@@ -99,7 +100,7 @@ if (request.method == "GET") {
 	var $sessionKey = inputPacket[2].split("=")[1]
 
 		$sessionID = $sessionID.replace(/;/g,"")
-	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
+	sparational.starspar.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
 			if ($user==$SessionResults[0].sessionuser) {
 	//Tables - Player, Ship
 // Receive player keystrokes
@@ -109,7 +110,7 @@ if (request.method == "GET") {
 	player = player.replace(/%22/g,'"')
 	player = JSON.parse(player)
 	// Store player location
-	sparational.sequelize.query("UPDATE starsparPlayer (x, y, score) VALUES ('"+player.x+"','"+player.y+"')").then(([$PagesResults, metadata]) => {
+	sparational.starspar.query("UPDATE starsparPlayer (x, y, score) VALUES ('"+player.x+"','"+player.y+"')").then(([$PagesResults, metadata]) => {
 	}).catch(function(err) {
 			writeLog("Invalid starspar starspar attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
 		response.end("Invalid starspar starspar attempt.") 
@@ -125,7 +126,7 @@ if (request.method == "GET") {
 		resetDemon();
 		// increment player score
 		// store player score
-		sparational.sequelize.query("UPDATE starsparShip (x, y, score) VALUES ('"+player.x+"','"+player.y+",(Select score from starsparShip where player = "+$user+"')+1)").then(([$PagesResults, metadata]) => {
+		sparational.starspar.query("UPDATE starsparShip (x, y, score) VALUES ('"+player.x+"','"+player.y+",(Select score from starsparShip where player = "+$user+"')+1)").then(([$PagesResults, metadata]) => {
 			
 		}).catch(function(err) {
 			writeLog("Invalid starspar starspar attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
@@ -134,8 +135,8 @@ if (request.method == "GET") {
 	}else{
 	}
 	//Update player location
-	sparational.sequelize.query("SELECT * from starsparMap where map = '"+map+"')").then(([$MapLocResults, metadata]) => {
-		sparational.sequelize.query("SELECT * from starsparScores where map = '"+map+"')").then(([$ScoresResults, metadata]) => {
+	sparational.starspar.query("SELECT * from starsparMap where map = '"+map+"')").then(([$MapLocResults, metadata]) => {
+		sparational.starspar.query("SELECT * from starsparScores where map = '"+map+"')").then(([$ScoresResults, metadata]) => {
 			//Send back all object locations and player scores for the player's map.
 			response.end(refreshKey($user)+":"+JSON.stringify($MapLocResults)+":"+JSON.stringify($ScoresResults))
 		}).catch(function(err) {
