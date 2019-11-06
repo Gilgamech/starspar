@@ -97,8 +97,8 @@ if (request.method == "GET") {
 	})
 
 } else if (request.method == "POST") {
-    if (request.url.indexOf("/starspar?") > 0) {//starspar from starspar
-	var inputPacket = request.url.split("/starspar?")[1].split("&")
+    if (request.url.indexOf("starspar?") > 0) {/starspar from starspar
+	var inputPacket = request.url.split("starspar?")[1].split("&")
 	var $user = inputPacket[0].split("=")[1]
 	var $sessionID = inputPacket[1].split("=")[1]
 	var $sessionKey = inputPacket[2].split("=")[1]
@@ -106,7 +106,7 @@ if (request.method == "GET") {
 
 	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
 	if ($user==$SessionResults[0].sessionuser) {
-	//Tables - Player, Ship
+
 // Receive player keystrokes
 	player = request.url.split("/&heero=?")[1].split("&")[3].split("=")[1]
 	player = player.replace(/~~/g,"#")
@@ -115,7 +115,8 @@ if (request.method == "GET") {
 	console.log(player)
 	player = JSON.parse(player)
 	// Store player location
-	sparational.starspar.query("UPDATE starsparLocations (x, y, score) VALUES ('"+player.x+"','"+player.y+"') where player='"+$user+"'").then(([$PagesResults, metadata]) => {
+	sparational.starspar.query("UPDATE starsparLocations (x, y) VALUES ('"+player.x+"','"+player.y+"') where player='"+$user+"'").then(([$PagesResults, metadata]) => {
+	//path="starspar?username=Gilgamech&SessionID=ue1z4ug6ezmuedbo6r&SessionKey=ivkqf1q1v5i5qgds4i&heero={%22x%22:1,%22y%22:1,%22speed%22:250}"
 	}).catch(function(err) {
 			writeLog("Invalid starspar starspar attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
 		response.end("Invalid starspar starspar attempt.") 
