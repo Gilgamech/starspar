@@ -42,17 +42,35 @@ function swimmersDecode($swimmers){
     return $swimmers.replace(/\~-~ /g,0).replace(/-~- /g,1).replace(/   /g,2).replace(/O_\|/g,3).replace(/o__/g,4).replace(/o,/g,5).replace(/o\_/g,6).replace(/,/g,7).octDecode() 
 }var $page_views = 0;
 
-function refreshKey($user) {
-	var $outkey = {}
-	$sessionID = getBadPW()
-	$sessionKey = getBadPW()
-	$output = ""+$user+":" + $sessionID +":" + $sessionKey 
-	sparational.sequelize.query("UPDATE Sessions SET logintime = current_timestamp, sessionid = '"+$sessionID+"', sessionkey = '"+$sessionKey+"' WHERE sessionuser='"+$user+"';INSERT INTO Sessions (sessionuser, sessionid,sessionkey) SELECT '"+$user+"','"+$sessionID+"','"+$sessionKey+"' WHERE NOT EXISTS (SELECT 1 FROM Sessions WHERE sessionuser='"+$user+"');").catch(function(err) {
-		writeLog("Invalid refreshKey attempt: " + err.message)
-		console.log("Invalid refreshKey attempt.") 
-	})//end Pages query
+function refreshKey($user,$sessionID,$sessionKey,$callback) {
+	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
+//console.log(JSON.stringify($SessionResults))
+		if ($user==$SessionResults[0].sessionuser) {
 
-	return $user + ":" + $sessionID + ":" + $sessionKey
+
+		$sessionID = getBadPW()
+		$sessionKey = getBadPW()
+		$output = ""+$user+":" + $sessionID +":" + $sessionKey 
+		sparational.sequelize.query("UPDATE Sessions SET logintime = current_timestamp, sessionid = '"+$sessionID+"', sessionkey = '"+$sessionKey+"' WHERE sessionuser='"+$user+"';INSERT INTO Sessions (sessionuser, sessionid,sessionkey) SELECT '"+$user+"','"+$sessionID+"','"+$sessionKey+"' WHERE NOT EXISTS (SELECT 1 FROM Sessions WHERE sessionuser='"+$user+"');").then(([$SessionResults, metadata]) => {
+		
+			var $output = $user + ":" + $sessionID + ":" + $sessionKey
+			$callback($output)
+
+		}).catch(function(err) {
+			writeLog("Invalid refreshKey attempt: " + err.message)
+			console.log("Invalid refreshKey attempt.") 
+		})//end Pages query
+
+
+		} else {
+			writeLog("Invalid starspar attempt: bad session key for user: "+$user+" sessionID: " + $sessionID +" from server: " + request.connection.remoteAddress + " for path " + request.url)
+			response.end("Invalid starspar attempt: bad session key for user: " + $user + " with sessionID-to-swim: " + swimmersEncode($sessionID)) 
+		}//end if user
+	}).catch(function(err) {
+		writeLog('Session error: '+err.message); 
+		response.end('Session error: '+err.message)
+	});//end Session query
+
 };
 
 function resetDemon($user) {
@@ -102,32 +120,25 @@ if (request.method == "GET") {
 
 } else if (request.method == "POST") {
     if (request.url.indexOf("starspar?") > 0) {//starspar from starspar
+	var map = 'noob'
 	var inputPacket = request.url.split("starspar?")[1].split("&")
 	var $user = inputPacket[0].split("=")[1]
 	var $sessionID = inputPacket[1].split("=")[1]
 	var $sessionKey = inputPacket[2].split("=")[1]
 	$sessionID = $sessionID.replace(/;/g,"")
 console.log(JSON.stringify(inputPacket))
-
-	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
-console.log(JSON.stringify($SessionResults))
-	if ($user==$SessionResults[0].sessionuser) {
-
 // Receive player keystrokes
-	player = inputPacket[3].split("=")[1]
-	player = player.replace(/~~/g,"#")
-	player = player.replace(/%20/g,'')
-	player = player.replace(/%22/g,'"')
-	player = JSON.parse(player)
+	player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
+
+refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 	// Store player location
 	sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"'").then(([$PagesResults, metadata]) => {
 	//path="starspar?username=Gilgamech&SessionID=ue1z4ug6ezmuedbo6r&SessionKey=ivkqf1q1v5i5qgds4i&heero={%22x%22:1,%22y%22:1,%22speed%22:250}"
 	}).catch(function(err) {
-			writeLog("Invalid UPDATE starsparLocations attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
+		writeLog("Invalid UPDATE starsparLocations attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
 		response.end("Invalid UPDATE starsparLocations attempt.") 
 	})//end update loc
 
-// perform collision calculations - Are they touching?			
 	// If collision
 	if (player.x <= (demon.x + 32)
 	&& demon.x <= (player.x + 32)
@@ -138,27 +149,20 @@ console.log(JSON.stringify($SessionResults))
 	};//end collision calculations
 	
 	//Send back all object locations and player scores for the player's map.
-	var map = 'noob'
 	sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map+"'").then(([$ScoresResults, metadata]) => {
 		console.log("Scores: "+JSON.stringify($ScoresResults))
+		response.end($keyCallback+":"+JSON.stringify($ScoresResults))
 		
-		response.end(refreshKey($user)+":"+JSON.stringify($ScoresResults))
 	}).catch(function(err) {
 			writeLog("Invalid SELECT starsparLocations attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
 		response.end("Invalid SELECT starsparLocations attempt.") 
 	})
 	
-		} else {
-			writeLog("Invalid starspar attempt: bad session key for user: "+$user+" sessionID: " + $sessionID +" from server: " + request.connection.remoteAddress + " for path " + request.url)
-			response.end("Invalid starspar attempt: bad session key for user: " + $user + " with sessionID-to-swim: " + swimmersEncode($sessionID)) 
-		}//end if user
-		}).catch(function(err) {
-			writeLog('Session error: '+err.message); 
-			response.end('Session error: '+err.message)
-		});//end Session query
-	writeLog('Invalid request.'); 
-	response.end('Invalid request.')
-
+	});//end refreshKey
+	
+	} else {
+		writeLog('Invalid request.'); 
+		response.end('Invalid request.')
     }; // end request url indexOf
 
 
