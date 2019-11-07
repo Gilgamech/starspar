@@ -143,6 +143,7 @@ refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 	sparational.starspar.query("SELECT locx,locy FROM starsparLocations where objectName='demon';").then(([$PagesResults, metadata]) => {
 		demon.x = $PagesResults.locx
 		demon.y = $PagesResults.locy
+		console.log(JSON.stringify(demon))
 		
 	// If collision
 	if (player.x <= (demon.x + 32)
@@ -153,8 +154,8 @@ refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 		resetDemon($user);
 	};//end collision calculations
 	}).catch(function(err) {
-		writeLog("Invalid resetDemon attempt: " + err.message)
-		console.log("Invalid resetDemon attempt.") 
+		writeLog("Invalid SELECT demon attempt: " + err.message)
+		console.log("Invalid SELECT demon attempt.") 
 	})//end Pages query
 	
 	//Send back all object locations and player scores for the player's map.
