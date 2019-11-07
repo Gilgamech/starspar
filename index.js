@@ -138,10 +138,10 @@ refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 	sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"'").then(([$PagesResults, metadata]) => {
 	//path="starspar?username=Gilgamech&SessionID=ue1z4ug6ezmuedbo6r&SessionKey=ivkqf1q1v5i5qgds4i&heero={%22x%22:1,%22y%22:1,%22speed%22:250}"
 
-	sparational.starspar.query("SELECT locx,locy FROM starsparLocations where objectName='demon';").then(([$PagesResults, metadata]) => {
+	sparational.starspar.query("SELECT locx,locy FROM starsparLocations where objectName='demon'").then(([$PagesResults, metadata]) => {
 		if ($PagesResults.locx >0) {demon.x = $PagesResults.locx}
 		if ($PagesResults.locy >0) {demon.y = $PagesResults.locy}
-		console.log(JSON.stringify(demon))
+		console.log("Demon: "+JSON.stringify(demon))
 		
 	// If collision
 	if (player.x <= (demon.x + 32)
