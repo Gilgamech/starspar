@@ -187,7 +187,6 @@ refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 //}
 
 //{ Run Once
-resetDemon('demon');
 writeLog('Service is running on port ' + $servicePort);
 console.log($serviceName + ' is running on port ' + $servicePort);
 //}
