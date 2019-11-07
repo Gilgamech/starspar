@@ -63,12 +63,14 @@ function refreshKey($user,$sessionID,$sessionKey,$callback) {
 
 
 		} else {
-			writeLog("Invalid starspar attempt: bad session key for user: "+$user+" sessionID: " + $sessionID)
-			console.log("Invalid starspar attempt: bad session key for user: " + $user + " with sessionID-to-swim: " + swimmersEncode($sessionID)) 
+			var $output = "Invalid starspar attempt: bad session key for user: "+$user
+			writeLog($output+" sessionID: " + $sessionID)
+			$callback($output)
 		}//end if user
 	}).catch(function(err) {
-		writeLog('Session error: '+err.message); 
-		console.log('Session error: '+err.message)
+		var $output = "Session error: "+err.message
+		writeLog($output)
+		$callback($output)
 	});//end Session query
 
 };
