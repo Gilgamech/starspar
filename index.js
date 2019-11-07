@@ -139,8 +139,9 @@ refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 	//path="starspar?username=Gilgamech&SessionID=ue1z4ug6ezmuedbo6r&SessionKey=ivkqf1q1v5i5qgds4i&heero={%22x%22:1,%22y%22:1,%22speed%22:250}"
 
 	sparational.starspar.query("SELECT locx,locy FROM starsparLocations where objectName='demon'").then(([$PagesResults, metadata]) => {
-		if (typeof $PagesResults.locx !== "undefined") {demon.x = $PagesResults.locx}
-		if (typeof $PagesResults.locy !== "undefined") {demon.y = $PagesResults.locy}
+		console.log("$PagesResults: "+JSON.stringify($PagesResults))
+		demon.x = $PagesResults[0].locx
+		demon.y = $PagesResults[0].locy
 		console.log("Demon: "+JSON.stringify(demon))
 		
 	// If collision
