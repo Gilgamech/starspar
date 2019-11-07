@@ -63,7 +63,7 @@ function refreshKey($user,$sessionID,$sessionKey,$callback) {
 
 
 		} else {
-			writeLog("Invalid starspar attempt: bad session key for user: "+$user+" sessionID: " + $sessionID +" from server: " + request.connection.remoteAddress + " for path " + request.url)
+			writeLog("Invalid starspar attempt: bad session key for user: "+$user+" sessionID: " + $sessionID)
 			response.end("Invalid starspar attempt: bad session key for user: " + $user + " with sessionID-to-swim: " + swimmersEncode($sessionID)) 
 		}//end if user
 	}).catch(function(err) {
