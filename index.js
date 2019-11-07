@@ -79,6 +79,7 @@ function resetDemon($user) {
 	demon.y = Math.round(32 + (Math.random() * (1000 - 64)),4); //canvas.height = map.height
 	sparational.starspar.query("UPDATE starsparLocations SET locx = '"+demon.x+"', locy='"+demon.y+"' WHERE objectName = 'demon';").then(([$PagesResults, metadata]) => {
   
+		console.log("resetDemon to x:"+demon.x+" y:"+demon.y) 
 	}).catch(function(err) {
 		writeLog("Invalid resetDemon attempt: " + err.message)
 		console.log("Invalid resetDemon attempt.") 
