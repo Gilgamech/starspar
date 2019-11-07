@@ -135,10 +135,6 @@ refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 	// Store player location
 	sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"'").then(([$PagesResults, metadata]) => {
 	//path="starspar?username=Gilgamech&SessionID=ue1z4ug6ezmuedbo6r&SessionKey=ivkqf1q1v5i5qgds4i&heero={%22x%22:1,%22y%22:1,%22speed%22:250}"
-	}).catch(function(err) {
-		writeLog("Invalid UPDATE starsparLocations attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
-		response.end("Invalid UPDATE starsparLocations attempt.") 
-	})//end update loc
 
 	sparational.starspar.query("SELECT locx,locy FROM starsparLocations where objectName='demon';").then(([$PagesResults, metadata]) => {
 		demon.x = $PagesResults.locx
@@ -157,6 +153,10 @@ refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 		writeLog("Invalid SELECT demon attempt: " + err.message)
 		console.log("Invalid SELECT demon attempt.") 
 	})//end Pages query
+	}).catch(function(err) {
+		writeLog("Invalid UPDATE starsparLocations attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
+		response.end("Invalid UPDATE starsparLocations attempt.") 
+	}).then(
 	
 	//Send back all object locations and player scores for the player's map.
 	sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map+"'").then(([$ScoresResults, metadata]) => {
@@ -167,6 +167,7 @@ refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 			writeLog("Invalid SELECT starsparLocations attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
 		response.end("Invalid SELECT starsparLocations attempt.") 
 	})
+	)//end then
 	
 	});//end refreshKey
 	
