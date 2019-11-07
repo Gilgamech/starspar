@@ -75,11 +75,11 @@ function refreshKey($user,$sessionID,$sessionKey,$callback) {
 
 function resetDemon($user) {
 	// Throw the demon somewhere on the screen randomly
-	demon.x = Math.round(32 + (Math.random() * (1000 - 64)),4); //canvas.width = map.width
-	demon.y = Math.round(32 + (Math.random() * (1000 - 64)),4); //canvas.height = map.height
+	demon.x = Math.round(32 + (Math.random() * (500 - 64)),4); //canvas.width = map.width
+	demon.y = Math.round(32 + (Math.random() * (500 - 64)),4); //canvas.height = map.height
 	sparational.starspar.query("UPDATE starsparLocations SET locx = '"+demon.x+"', locy='"+demon.y+"' WHERE objectName = 'demon';").then(([$PagesResults, metadata]) => {
-  
 		console.log("resetDemon to x:"+demon.x+" y:"+demon.y) 
+		
 	}).catch(function(err) {
 		writeLog("Invalid resetDemon attempt: " + err.message)
 		console.log("Invalid resetDemon attempt.") 
@@ -140,6 +140,10 @@ refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 		response.end("Invalid UPDATE starsparLocations attempt.") 
 	})//end update loc
 
+	sparational.starspar.query("SELECT locx,locy FROM starsparLocations where objectName='demon';").then(([$PagesResults, metadata]) => {
+		demon.x = $PagesResults.locx
+		demon.y = $PagesResults.locy
+		
 	// If collision
 	if (player.x <= (demon.x + 32)
 	&& demon.x <= (player.x + 32)
@@ -148,6 +152,10 @@ refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 		// choose & store demon location
 		resetDemon($user);
 	};//end collision calculations
+	}).catch(function(err) {
+		writeLog("Invalid resetDemon attempt: " + err.message)
+		console.log("Invalid resetDemon attempt.") 
+	})//end Pages query
 	
 	//Send back all object locations and player scores for the player's map.
 	sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map+"'").then(([$ScoresResults, metadata]) => {
