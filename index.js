@@ -151,7 +151,7 @@ refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 	//Send back all object locations and player scores for the player's map.
 	sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map+"'").then(([$ScoresResults, metadata]) => {
 		console.log("Scores: "+JSON.stringify($ScoresResults))
-		response.end($keyCallback+":"+JSON.stringify($ScoresResults))
+		response.end($keyCallback+":scores:"+JSON.stringify($ScoresResults))
 		
 	}).catch(function(err) {
 			writeLog("Invalid SELECT starsparLocations attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
