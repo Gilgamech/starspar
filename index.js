@@ -64,11 +64,11 @@ function refreshKey($user,$sessionID,$sessionKey,$callback) {
 
 		} else {
 			writeLog("Invalid starspar attempt: bad session key for user: "+$user+" sessionID: " + $sessionID)
-			response.end("Invalid starspar attempt: bad session key for user: " + $user + " with sessionID-to-swim: " + swimmersEncode($sessionID)) 
+			console.log("Invalid starspar attempt: bad session key for user: " + $user + " with sessionID-to-swim: " + swimmersEncode($sessionID)) 
 		}//end if user
 	}).catch(function(err) {
 		writeLog('Session error: '+err.message); 
-		response.end('Session error: '+err.message)
+		console.log('Session error: '+err.message)
 	});//end Session query
 
 };
