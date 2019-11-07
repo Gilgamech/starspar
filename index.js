@@ -133,7 +133,7 @@ console.log(JSON.stringify(inputPacket))
 
 refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 	// Store player location
-	sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.newx+"', locy='"+player.newy+"' where objectName='"+$user+"'").then(([$PagesResults, metadata]) => {
+	sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"'").then(([$PagesResults, metadata]) => {
 	//path="starspar?username=Gilgamech&SessionID=ue1z4ug6ezmuedbo6r&SessionKey=ivkqf1q1v5i5qgds4i&heero={%22x%22:1,%22y%22:1,%22speed%22:250}"
 
 	sparational.starspar.query("SELECT locx,locy FROM starsparLocations where objectName='demon';").then(([$PagesResults, metadata]) => {
