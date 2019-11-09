@@ -11,7 +11,7 @@ sparational.starspar = new sparational.Sequelize(process.env.STARSPAR_DATABASE_U
 sparational.sequelize = new sparational.Sequelize(process.env.LOGGING_DATABASE_URL || 'postgres://postgres:dbpasswd@127.0.0.1:5432/postgres', {logging: false});
 var heero = {};
 var demon = {};
-var map
+var map = {};
 map.x = 10000
 map.y = 10000
 map.name = 'noob'
