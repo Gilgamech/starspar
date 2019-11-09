@@ -12,8 +12,8 @@ sparational.sequelize = new sparational.Sequelize(process.env.LOGGING_DATABASE_U
 var heero = {};
 var demon = {};
 var map = {};
-map.x = 5000
-map.y = 5000
+map.x = 10000
+map.y = 10000
 map.name = 'noob'
 //}
 
