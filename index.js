@@ -132,7 +132,7 @@ refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 	// Store player location, send back all object locations and player scores for the player's map.
 	sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map+"'").then(([$PagesResults, metadata]) => {
 		console.log("$PagesResults: "+JSON.stringify($PagesResults))
-		$demonResults = $gameObjects.filter(o => {return o.objectname=="demon"})[0]
+		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
 		demon.x = $demonResults.locx
 		demon.y = $demonResults.locy
 		console.log("Demon: "+JSON.stringify(demon))
