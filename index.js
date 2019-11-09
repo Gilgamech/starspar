@@ -11,6 +11,10 @@ sparational.starspar = new sparational.Sequelize(process.env.STARSPAR_DATABASE_U
 sparational.sequelize = new sparational.Sequelize(process.env.LOGGING_DATABASE_URL || 'postgres://postgres:dbpasswd@127.0.0.1:5432/postgres', {logging: false});
 var heero = {};
 var demon = {};
+var map
+map.x = 10000
+map.y = 10000
+map.name = 'noob'
 //}
 
 //{ functions
@@ -77,8 +81,8 @@ function refreshKey($user,$sessionID,$sessionKey,$callback) {
 
 function resetDemon($user) {
 	// Throw the demon somewhere on the screen randomly
-	demon.x = Math.round(32 + (Math.random() * (500 - 64)),4); //canvas.width = map.width
-	demon.y = Math.round(32 + (Math.random() * (500 - 64)),4); //canvas.height = map.height
+	demon.x = Math.round(32 + (Math.random() * (map.x - 64)),4); //canvas.width = map.width
+	demon.y = Math.round(32 + (Math.random() * (map.y - 64)),4); //canvas.height = map.height
 	//Store demon location and increment & store the player's score
 	sparational.starspar.query("UPDATE starsparLocations SET locx = '"+demon.x+"', locy='"+demon.y+"' WHERE objectName = 'demon';UPDATE starsparLocations SET score = (SELECT score from starsparLocations WHERE objectName = '"+$user+"')+1 WHERE objectName = '"+$user+"';").then(([$PagesResults, metadata]) => {
 		console.log("resetDemon to x:"+demon.x+" y:"+demon.y) 
@@ -118,7 +122,6 @@ if (request.method == "GET") {
 
 } else if (request.method == "POST") {
     if (request.url.indexOf("starspar?") > 0) {//starspar from starspar
-	var map = 'noob'
 	var inputPacket = request.url.split("starspar?")[1].split("&")
 	var $user = inputPacket[0].split("=")[1]
 	var $sessionID = inputPacket[1].split("=")[1]
@@ -130,7 +133,7 @@ console.log(JSON.stringify(inputPacket))
 
 refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 	// Store player location, send back all object locations and player scores for the player's map.
-	sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map+"'").then(([$PagesResults, metadata]) => {
+	sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"'").then(([$PagesResults, metadata]) => {
 		console.log("$PagesResults: "+JSON.stringify($PagesResults))
 		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
 		demon.x = $demonResults.locx
