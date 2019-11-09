@@ -129,13 +129,12 @@ console.log(JSON.stringify(inputPacket))
 	player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
 
 refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
-	// Store player location, send back all object locations and player scores for the player's map.
-	sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map+"'").then(([$PagesResults, metadata]) => {
+	// Store player location
+	sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"';SELECT locx,locy FROM starsparLocations where objectName='demon'").then(([$PagesResults, metadata]) => {
 		console.log("$PagesResults: "+JSON.stringify($PagesResults))
-		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
-        console.log("Demon: "+JSON.stringify(demon))
-		demon.x = $demonResults.locx
-		demon.y = $demonResults.locy
+		demon.x = $PagesResults[0].locx
+		demon.y = $PagesResults[0].locy
+		console.log("Demon: "+JSON.stringify(demon))
 		
 	// If collision
 	if (player.x <= (demon.x + 32)
@@ -149,7 +148,17 @@ refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 		writeLog("Invalid SELECT demon attempt: " + err.message)
 		console.log("Invalid SELECT demon attempt.") 
 	})//end Pages query
+	
+	//Send back all object locations and player scores for the player's map.
+	sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map+"'").then(([$ScoresResults, metadata]) => {
+		console.log("Scores: "+JSON.stringify($ScoresResults))
+		response.end($keyCallback+":scores:"+JSON.stringify($ScoresResults))
 		
+	}).catch(function(err) {
+			writeLog("Invalid SELECT starsparLocations attempt: " + err.message + " - from server: " + request.connection.remoteAddress + " for path " + request.url)
+		response.end("Invalid SELECT starsparLocations attempt.") 
+	})
+	
 	});//end refreshKey
 	
 	} else {
