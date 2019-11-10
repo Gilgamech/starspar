@@ -46,13 +46,7 @@ function swimmersDecode($swimmers){
     return $swimmers.replace(/\~-~ /g,0).replace(/-~- /g,1).replace(/   /g,2).replace(/O_\|/g,3).replace(/o__/g,4).replace(/o,/g,5).replace(/o\_/g,6).replace(/,/g,7).octDecode() 
 }var $page_views = 0;
 
-function resetDemon($user,$sessionID,$sessionKey,$callback) {
-	// Throw the demon somewhere on the screen randomly
-	demon.x = Math.round(32 + (Math.random() * (map.x - 64)),4); //canvas.width = map.width
-	demon.y = Math.round(32 + (Math.random() * (map.y - 64)),4); //canvas.height = map.height
-	//Store demon location and increment & store the player's score
-	sparational.starspar.query("UPDATE starsparLocations SET locx = '"+demon.x+"', locy='"+demon.y+"' WHERE objectName = 'demon';UPDATE starsparLocations SET score = (SELECT score from starsparLocations WHERE objectName = '"+$user+"')+1 WHERE objectName = '"+$user+"';").then(([$PagesResults, metadata]) => {
-		console.log("resetDemon to x:"+demon.x+" y:"+demon.y) 
+function refreshKey($user,$sessionID,$sessionKey,$callback) {
 	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
 //console.log(JSON.stringify($SessionResults))
 		if ($user==$SessionResults[0].sessionuser) {
@@ -83,7 +77,15 @@ function resetDemon($user,$sessionID,$sessionKey,$callback) {
 		$callback($output)
 	});//end Session query
 
+};
 
+function resetDemon($user) {
+	// Throw the demon somewhere on the screen randomly
+	demon.x = Math.round(32 + (Math.random() * (map.x - 64)),4); //canvas.width = map.width
+	demon.y = Math.round(32 + (Math.random() * (map.y - 64)),4); //canvas.height = map.height
+	//Store demon location and increment & store the player's score
+	sparational.starspar.query("UPDATE starsparLocations SET locx = '"+demon.x+"', locy='"+demon.y+"' WHERE objectName = 'demon';UPDATE starsparLocations SET score = (SELECT score from starsparLocations WHERE objectName = '"+$user+"')+1 WHERE objectName = '"+$user+"';").then(([$PagesResults, metadata]) => {
+		console.log("resetDemon to x:"+demon.x+" y:"+demon.y) 
 		
 	}).catch(function(err) {
 		writeLog("Invalid resetDemon attempt: " + err.message)
@@ -148,13 +150,11 @@ console.log(JSON.stringify(inputPacket))
 		&& player.y <= (demon.y + 32)
 		&& demon.y <= (player.y + 32)) {
 			// choose & store demon location
-			resetDemon($user,$sessionID,$sessionKey,function ($keyCallback){
-				response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
-			});//end refreshKey
-		} else {
+			resetDemon($user);
+		};//end collision calculations
 			var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
-		};//end collision calculations
+
 	}).catch(function(err) {
 		writeLog("Invalid SELECT demon attempt: " + err.message)
 		console.log("Invalid SELECT demon attempt.") 
