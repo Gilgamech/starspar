@@ -46,7 +46,13 @@ function swimmersDecode($swimmers){
     return $swimmers.replace(/\~-~ /g,0).replace(/-~- /g,1).replace(/   /g,2).replace(/O_\|/g,3).replace(/o__/g,4).replace(/o,/g,5).replace(/o\_/g,6).replace(/,/g,7).octDecode() 
 }var $page_views = 0;
 
-function refreshKey($user,$sessionID,$sessionKey,$callback) {
+function resetDemon($user,$sessionID,$sessionKey,$callback) {
+	// Throw the demon somewhere on the screen randomly
+	demon.x = Math.round(32 + (Math.random() * (map.x - 64)),4); //canvas.width = map.width
+	demon.y = Math.round(32 + (Math.random() * (map.y - 64)),4); //canvas.height = map.height
+	//Store demon location and increment & store the player's score
+	sparational.starspar.query("UPDATE starsparLocations SET locx = '"+demon.x+"', locy='"+demon.y+"' WHERE objectName = 'demon';UPDATE starsparLocations SET score = (SELECT score from starsparLocations WHERE objectName = '"+$user+"')+1 WHERE objectName = '"+$user+"';").then(([$PagesResults, metadata]) => {
+		console.log("resetDemon to x:"+demon.x+" y:"+demon.y) 
 	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
 //console.log(JSON.stringify($SessionResults))
 		if ($user==$SessionResults[0].sessionuser) {
@@ -77,15 +83,7 @@ function refreshKey($user,$sessionID,$sessionKey,$callback) {
 		$callback($output)
 	});//end Session query
 
-};
 
-function resetDemon($user) {
-	// Throw the demon somewhere on the screen randomly
-	demon.x = Math.round(32 + (Math.random() * (map.x - 64)),4); //canvas.width = map.width
-	demon.y = Math.round(32 + (Math.random() * (map.y - 64)),4); //canvas.height = map.height
-	//Store demon location and increment & store the player's score
-	sparational.starspar.query("UPDATE starsparLocations SET locx = '"+demon.x+"', locy='"+demon.y+"' WHERE objectName = 'demon';UPDATE starsparLocations SET score = (SELECT score from starsparLocations WHERE objectName = '"+$user+"')+1 WHERE objectName = '"+$user+"';").then(([$PagesResults, metadata]) => {
-		console.log("resetDemon to x:"+demon.x+" y:"+demon.y) 
 		
 	}).catch(function(err) {
 		writeLog("Invalid resetDemon attempt: " + err.message)
@@ -131,7 +129,6 @@ console.log(JSON.stringify(inputPacket))
 // Receive player keystrokes
 	player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
 
-refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 	// Store player location, send back all object locations and player scores for the player's map.
 	sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"'").then(([$PagesResults, metadata]) => {
 		console.log("$PagesResults: "+JSON.stringify($PagesResults))
@@ -140,21 +137,24 @@ refreshKey($user,$sessionID,$sessionKey,function ($keyCallback){
 		demon.y = $demonResults.locy
 		console.log("Demon: "+JSON.stringify(demon))
 		
-	// If collision
-	if (player.x <= (demon.x + 32)
-	&& demon.x <= (player.x + 32)
-	&& player.y <= (demon.y + 32)
-	&& demon.y <= (player.y + 32)) {
-		// choose & store demon location
-		resetDemon($user);
-	};//end collision calculations
-		response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
+		// If collision
+		if (player.x <= (demon.x + 32)
+		&& demon.x <= (player.x + 32)
+		&& player.y <= (demon.y + 32)
+		&& demon.y <= (player.y + 32)) {
+			// choose & store demon location
+			resetDemon($user,$sessionID,$sessionKey,function ($keyCallback){
+				response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
+			});//end refreshKey
+		} else {
+			var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
+			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
+		};//end collision calculations
 	}).catch(function(err) {
 		writeLog("Invalid SELECT demon attempt: " + err.message)
 		console.log("Invalid SELECT demon attempt.") 
 	})//end Pages query
 		
-	});//end refreshKey
 	
 	} else {
 		writeLog('Invalid request.'); 
