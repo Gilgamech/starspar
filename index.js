@@ -129,6 +129,11 @@ console.log(JSON.stringify(inputPacket))
 // Receive player keystrokes
 	player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
 
+	if (player.x <= 0){player.x = 0}
+	if (player.y <= 0){player.y = 0}
+	if (player.x >= map.x){player.x = map.x}
+	if (player.y >= map.y){player.y = map.y}
+
 	// Store player location, send back all object locations and player scores for the player's map.
 	sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"'").then(([$PagesResults, metadata]) => {
 		console.log("$PagesResults: "+JSON.stringify($PagesResults))
