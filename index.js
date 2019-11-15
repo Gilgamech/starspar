@@ -146,15 +146,15 @@ console.log(JSON.stringify(inputPacket))
 		demon.y = $demonResults.locy
 		console.log("Demon: "+JSON.stringify(demon))
 		
-		// If collision
-		if (player.x <= (demon.x + 32)
-		&& demon.x <= (player.x + 32)
-		&& player.y <= (demon.y + 32)
-		&& demon.y <= (player.y + 32)) {
-			// choose & store demon location
-			resetDemon($user);
-		};//end collision calculations
-			var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
+        // If collision
+        if (player.x <= (demon.x + 32)
+        && demon.x <= (player.x + 32)
+        && player.y <= (demon.y + 32)
+        && demon.y <= (player.y + 32)) {
+            // choose & store demon location
+            resetDemon($user);
+        };//end collision calculations
+            var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 
 	}).catch(function(err) {
