@@ -139,7 +139,7 @@ console.log(JSON.stringify(inputPacket))
 	if (player.y >= map.y){player.y = map.y}
 
 	// Store player location, send back all object locations and player scores for the player's map.
-	sparational.starspar.query("SELECT updatePlayer('"+player.x+"', '"+player.y+"','"+$user+"','"+map.name+"');").then(([$PagesResults, metadata]) => {
+		sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"'").then(([$PagesResults, metadata]) => {
 		console.log("$PagesResults: "+JSON.stringify($PagesResults))
 		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
 		demon.x = $demonResults.locx
