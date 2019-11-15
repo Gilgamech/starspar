@@ -9,8 +9,9 @@ var $servicePort = (process.env.PORT || 5010);
 var $hostName = (process.env.HOST || "localhost:"+$servicePort);
 sparational.starspar = new sparational.Sequelize(process.env.STARSPAR_DATABASE_URL || 'postgres://postgres:dbpasswd@127.0.0.1:5432/postgres', {logging: false});
 sparational.sequelize = new sparational.Sequelize(process.env.LOGGING_DATABASE_URL || 'postgres://postgres:dbpasswd@127.0.0.1:5432/postgres', {logging: false});
-var heero = {};
+
 var demon = {};
+
 var map = {};
 map.x = 10000
 map.y = 10000
@@ -61,8 +62,9 @@ function refreshKey($user,$sessionID,$sessionKey,$callback) {
 			$callback($output)
 
 		}).catch(function(err) {
-			writeLog("Invalid refreshKey attempt: " + err.message)
-			console.log("Invalid refreshKey attempt.") 
+			var $output = "Invalid refreshKey attempt: "+$user
+			writeLog($output+" error: "+ err.message +" - sessionID: " + $sessionID)
+			$callback($output)
 		})//end Pages query
 
 
