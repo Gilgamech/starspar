@@ -158,6 +158,10 @@ console.log(JSON.stringify(inputPacket))
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 
 	}).catch(function(err) {
+		writeLog("Invalid updatePlayer attempt: " + err.message)
+		console.log("Invalid updatePlayer attempt.") 
+	})//end Pages query
+	}).catch(function(err) {
 		writeLog("Invalid SELECT demon attempt: " + err.message)
 		console.log("Invalid SELECT demon attempt.") 
 	})//end Pages query
