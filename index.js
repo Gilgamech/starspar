@@ -86,7 +86,7 @@ function resetDemon($user) {
 	demon.x = Math.round(32 + (Math.random() * (map.x - 64)),4); //canvas.width = map.width
 	demon.y = Math.round(32 + (Math.random() * (map.y - 64)),4); //canvas.height = map.height
 	//Store demon location and increment & store the player's score
-	sparational.starspar.query("UPDATE starsparLocations SET locx = '"+demon.x+"', locy='"+demon.y+"' WHERE objectName = 'demon';UPDATE starsparLocations SET score = (SELECT score from starsparLocations WHERE objectName = '"+$user+"')+1 WHERE objectName = '"+$user+"';").then(([$PagesResults, metadata]) => {
+	sparational.starspar.query("SELECT resetDemon("+demon.x+","+demon.y+",'"+$user+");").then(([$PagesResults, metadata]) => {
 		console.log("resetDemon to x:"+demon.x+" y:"+demon.y) 
 		
 	}).catch(function(err) {
