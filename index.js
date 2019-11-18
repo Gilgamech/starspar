@@ -16,6 +16,12 @@ var map = {};
 map.x = 10000
 map.y = 10000
 map.name = 'noob'
+//How fast the game should update.
+var $ticks = 10
+var $tickDelay = (1000/$ticks)
+var then = Date.now();
+var $cumulativeTick = 0;
+
 //}
 
 //{ functions
@@ -137,6 +143,11 @@ console.log(JSON.stringify(inputPacket))
 	if (player.y <= 0){player.y = 0}
 	if (player.x >= map.x){player.x = map.x}
 	if (player.y >= map.y){player.y = map.y}
+
+	if (player.mouseClicked == true){	
+		sparational.starspar.query("insertProjectile('noob','"+player.x+"','"+player.y+"','"+player.mouseX+"','"+player.mouseY+"')")	
+	}
+
 
 	// Store player location, send back all object locations and player scores for the player's map.
 		sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"'").then(([$PagesResults, metadata]) => {
