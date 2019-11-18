@@ -16,6 +16,9 @@ var map = {};
 map.x = 10000
 map.y = 10000
 map.name = 'noob'
+
+projectileSpeed = 100;
+
 //How fast the game should update.
 var $ticks = 10
 var $tickDelay = (1000/$ticks)
@@ -83,6 +86,26 @@ function refreshKey($user,$sessionID,$sessionKey,$callback) {
 	}).catch(function(err) {
 		var $output = "Session error: "+err.message
 		writeLog($output)
+		$callback($output)
+	});//end Session query
+
+};
+
+function checkKey($user,$sessionID,$sessionKey,$callback) {
+	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$sessionuser, metadata]) => {
+//console.log(JSON.stringify($sessionuser))
+		if ($user==$sessionuser[0]) {
+		var $output = $sessionuser[0] + ":" + $sessionID + ":" + $sessionKey
+		$callback($output)
+
+		} else {
+			var $output = "Invalid checkKey attempt: "+$user
+			writeLog($output+" - sessionID: " + $sessionID)
+			$callback($output)
+		}//end if user
+	}).catch(function(err) {
+		var $output = "Invalid checkKey attempt: "+$user
+		writeLog($output+" error: "+ err.message +" - sessionID: " + $sessionID)
 		$callback($output)
 	});//end Session query
 
@@ -157,11 +180,9 @@ console.log(JSON.stringify(inputPacket))
 
 	// Store player location, send back all object locations and player scores for the player's map.
 		sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"'").then(([$PagesResults, metadata]) => {
-		console.log("$PagesResults: "+JSON.stringify($PagesResults))
 		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
 		demon.x = $demonResults.locx
 		demon.y = $demonResults.locy
-		console.log("Demon: "+JSON.stringify(demon))
 		
         // If collision
         if (player.x <= (demon.x + 32)
