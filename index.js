@@ -207,8 +207,8 @@ if (request.method == "GET") {
 		}).catch(function(err) {
 			writeLog("Invalid gameTick attempt: " + err.message)
 			console.log("Invalid gameTick attempt.") 		
-	}
-			
+		})
+	}	
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 
 	}).catch(function(err) {
