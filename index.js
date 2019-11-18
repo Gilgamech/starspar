@@ -145,7 +145,7 @@ console.log(JSON.stringify(inputPacket))
 	if (player.y >= map.y){player.y = map.y}
 
 	if (player.mouseClicked == true){
-		writeLog($user + " clicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY+")
+		writeLog($user + " clicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY)
 		sparational.starspar.query("insertProjectile('noob','"+player.x+"','"+player.y+"','"+player.mouseX+"','"+player.mouseY+"')")	
 	}
 
