@@ -21,6 +21,7 @@ var $ticks = 10
 var $tickDelay = (1000/$ticks)
 var then = Date.now();
 var $cumulativeTick = 0;
+var $clickCheck = false;
 
 //}
 
@@ -144,9 +145,13 @@ console.log(JSON.stringify(inputPacket))
 	if (player.x >= map.x){player.x = map.x}
 	if (player.y >= map.y){player.y = map.y}
 
-	if (player.mouseClicked == true){
-		writeLog($user + " clicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY)
+	if (player.mouseClicked == true && $clickCheck == false){
+		$clickCheck = true
+		//writeLog($user + " clicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY)
 		sparational.starspar.query("insertProjectile('noob','"+player.x+"','"+player.y+"','"+player.mouseX+"','"+player.mouseY+"')")	
+	}else if (player.mouseClicked == false){
+		$clickCheck = false
+		writeLog($user + " unclicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY)
 	}
 
 
