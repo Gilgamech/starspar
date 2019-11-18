@@ -170,7 +170,7 @@ if (request.method == "GET") {
 
 	if (player.mouseClicked == true && $clickCheck == false){
 		$clickCheck = true
-		sparational.starspar.query("SELECT insertProjectile('noob',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+")").then(([$PagesResults, metadata]) => {
+		sparational.starspar.query("SELECT insertProjectile('noob',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+");").then(([$PagesResults, metadata]) => {
 			writeLog($user + " clicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY)
 		}).catch(function(err) {
 			writeLog("Invalid insertProjectile attempt: " + err.message)
@@ -197,6 +197,18 @@ if (request.method == "GET") {
             resetDemon($user);
         };//end collision calculations
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
+			//gameTick
+  var now = Date.now();
+  var delta = now - then;
+  $cumulativeTick += delta;
+	if ($cumulativeTick > $tickDelay) {
+		$cumulativeTick -= $tickDelay;
+		sparational.starspar.query("SELECT gameTick();").then(([$PagesResults, metadata]) => {
+		}).catch(function(err) {
+			writeLog("Invalid gameTick attempt: " + err.message)
+			console.log("Invalid gameTick attempt.") 		
+	}
+			
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 
 	}).catch(function(err) {
