@@ -159,7 +159,7 @@ if (request.method == "GET") {
 	var $sessionID = inputPacket[1].split("=")[1]
 	var $sessionKey = inputPacket[2].split("=")[1]
 	$sessionID = $sessionID.replace(/;/g,"")
-console.log(JSON.stringify(inputPacket))
+//console.log(JSON.stringify(inputPacket))
 // Receive player keystrokes
 	player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
 
@@ -170,8 +170,12 @@ console.log(JSON.stringify(inputPacket))
 
 	if (player.mouseClicked == true && $clickCheck == false){
 		$clickCheck = true
-		writeLog($user + " clicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY)
-		sparational.starspar.query("insertProjectile('noob','"+player.x+"','"+player.y+"','"+player.mouseX+"','"+player.mouseY+"')")	
+		sparational.starspar.query("insertProjectile('noob','"+player.x+"','"+player.y+"','"+player.mouseX+"','"+player.mouseY+"')").then(([$PagesResults, metadata]) => {
+			writeLog($user + " clicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY)
+		}).catch(function(err) {
+			writeLog("Invalid insertProjectile attempt: " + err.message)
+			console.log("Invalid insertProjectile attempt.") 
+		})//end Pages query
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
 		writeLog($user + " unclicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY)
