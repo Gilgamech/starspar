@@ -163,6 +163,12 @@ if (request.method == "GET") {
 // Receive player keystrokes
 	player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
 
+	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
+		sparational.starspar.query("SELECT locx,locy FROM starsparLocations where objectname = '"+$user+"' AND mapname = '"+map.name+"'").then(([$locResults, metadata]) => {
+			player.x = $locResults.locx
+			player.y = $locResults.locy
+		})
+	}
 	if (player.x <= 0){player.x = 0}
 	if (player.y <= 0){player.y = 0}
 	if (player.x >= map.x){player.x = map.x}
@@ -171,16 +177,13 @@ if (request.method == "GET") {
 	if (player.mouseClicked == true && $clickCheck == false){
 		$clickCheck = true
 		sparational.starspar.query("SELECT insertProjectile('noob',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+");").then(([$PagesResults, metadata]) => {
-			writeLog($user + " clicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY)
 		}).catch(function(err) {
 			writeLog("Invalid insertProjectile attempt: " + err.message)
 			console.log("Invalid insertProjectile attempt.") 
 		})//end Pages query
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
-		writeLog($user + " unclicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY)
 	}
-
 
 	// Store player location, send back all object locations and player scores for the player's map.
 		sparational.starspar.query("UPDATE starsparLocations  SET locx='"+player.x+"', locy='"+player.y+"' where objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"'").then(([$PagesResults, metadata]) => {
