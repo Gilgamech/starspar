@@ -147,9 +147,9 @@ console.log(JSON.stringify(inputPacket))
 
 	if (player.mouseClicked == true && $clickCheck == false){
 		$clickCheck = true
-		//writeLog($user + " clicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY)
+		writeLog($user + " clicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY)
 		sparational.starspar.query("insertProjectile('noob','"+player.x+"','"+player.y+"','"+player.mouseX+"','"+player.mouseY+"')")	
-	}else if (player.mouseClicked == false){
+	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
 		writeLog($user + " unclicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY)
 	}
