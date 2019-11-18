@@ -167,6 +167,9 @@ if (request.method == "GET") {
 		sparational.starspar.query("SELECT locx,locy FROM starsparLocations where objectname = '"+$user+"' AND mapname = '"+map.name+"'").then(([$locResults, metadata]) => {
 			player.x = $locResults.locx
 			player.y = $locResults.locy
+		}).catch(function(err) {
+			writeLog("Invalid locResults attempt: " + err.message)
+			console.log("Invalid locResults attempt.") 
 		})
 	}
 	if (player.x <= 0){player.x = 0}
