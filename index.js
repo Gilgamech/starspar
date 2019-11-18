@@ -170,7 +170,7 @@ if (request.method == "GET") {
 
 	if (player.mouseClicked == true && $clickCheck == false){
 		$clickCheck = true
-		sparational.starspar.query("insertProjectile('noob','"+player.x+"','"+player.y+"','"+player.mouseX+"','"+player.mouseY+"')").then(([$PagesResults, metadata]) => {
+		sparational.starspar.query("insertProjectile('noob',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+")").then(([$PagesResults, metadata]) => {
 			writeLog($user + " clicked mouse at x="+player.x+", y="+player.y+", mouse x="+player.mouseX+" mouse y="+player.mouseY)
 		}).catch(function(err) {
 			writeLog("Invalid insertProjectile attempt: " + err.message)
