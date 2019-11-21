@@ -190,10 +190,7 @@ console.log(JSON.stringify(inputPacket))
 	}
 
 	// Store player location, send back all object locations and player scores for the player's map.
-		sparational.starspar.query("SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+");").catch(function(err) {
-			writeLog("Invalid updatePlayer attempt - SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+"); - " + err.message)
-			console.log("Invalid updatePlayer attempt.") 
-		}).then(
+		sparational.starspar.query("SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+");").then(
 
 		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"';").then(([$PagesResults, metadata]) => {
 		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
