@@ -184,8 +184,7 @@ console.log(JSON.stringify(inputPacket))
 		$clickCheck = true
 		sparational.starspar.query("SELECT insertProjectile('noob',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+");").then(([$PagesResults, metadata]) => {
 		}).catch(function(err) {
-			writeLog("Invalid insertProjectile attempt: " + err.message)
-			console.log("Invalid insertProjectile attempt - SELECT insertProjectile('noob',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+");") 
+			console.log("Invalid insertProjectile attempt - SELECT insertProjectile('noob',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+"); - "+ err.message)
 		})//end Pages query
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
@@ -194,15 +193,14 @@ console.log(JSON.stringify(inputPacket))
 	// Store player location, send back all object locations and player scores for the player's map.
 		sparational.starspar.query("SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+");").catch(function(err) {
 		writeLog("Invalid updatePlayer attempt - updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+"); - " + err.message)
-		console.log("Invalid updatePlayer attempt.") 
 	})//end Pages query
 
 
 		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"';").then(([$PagesResults, metadata]) => {
 		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
 	writeLog("demonResults " + JSON.stringify($demonResults) + "locResults.locx " + $demonResults[0].locx + " locResults.locy "+ $demonResults[0].locy) 
-		demon.x = $demonResults[0].locx
-		demon.y = $demonResults[0].locy
+		//demon.x = $demonResults[0].locx
+		//demon.y = $demonResults[0].locy
 		
         // If collision
         if (player.x <= (demon.x + 32)
