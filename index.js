@@ -194,9 +194,7 @@ console.log(JSON.stringify(inputPacket))
 		sparational.starspar.query("SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+");").catch(function(err) {
 		writeLog("Invalid updatePlayer attempt - updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+"); - " + err.message)
 	})//end Pages query
-
-
-		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"';").then(([$PagesResults, metadata]) => {
+		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0;").then(([$PagesResults, metadata]) => {
 		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
 		demon.x = $demonResults.locx
 		demon.y = $demonResults.locy
@@ -225,7 +223,7 @@ console.log(JSON.stringify(inputPacket))
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 
 	}).catch(function(err) {
-		writeLog("Invalid select return attempt - SELECT * FROM starsparLocations where mapname = '"+map.name+"'; - " + err.message)
+		writeLog("Invalid select return attempt - SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0; - " + err.message)
 		console.log("Invalid select return attempt.") 
 	})//end Pages query
 	} else {
