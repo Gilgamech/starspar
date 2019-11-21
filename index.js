@@ -190,8 +190,8 @@ if (request.method == "GET") {
 
 	// Store player location, send back all object locations and player scores for the player's map.
 		sparational.starspar.query("SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+");").catch(function(err) {
-			writeLog("Invalid updatePlayer attempt: " + err.message)
-			console.log("Invalid updatePlayer attempt - SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+");") 
+			writeLog("Invalid updatePlayer attempt - SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+"); - " + err.message)
+			console.log("Invalid updatePlayer attempt.") 
 		}).then(
 
 		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"';").then(([$PagesResults, metadata]) => {
@@ -223,8 +223,8 @@ if (request.method == "GET") {
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 
 	}).catch(function(err) {
-		writeLog("Invalid select return attempt: " + err.message)
-		console.log("Invalid select return attempt - SELECT * FROM starsparLocations where mapname = '"+map.name+"';") 
+		writeLog("Invalid select return attempt - SELECT * FROM starsparLocations where mapname = '"+map.name+"'; - " + err.message)
+		console.log("Invalid select return attempt.") 
 	})//end Pages query
 )// end updatePlayer then
 	} else {
