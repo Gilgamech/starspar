@@ -194,7 +194,7 @@ console.log(JSON.stringify(inputPacket))
 		sparational.starspar.query("SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+");").catch(function(err) {
 		writeLog("Invalid updatePlayer attempt - updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+"); - " + err.message)
 	})//end Pages query
-		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0;").then(([$PagesResults, metadata]) => {
+		sparational.starspar.query("UPDATE starsparLocations SET ticksremaining=100 WHERE objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0;").then(([$PagesResults, metadata]) => {
 		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
 		demon.x = $demonResults.locx
 		demon.y = $demonResults.locy
