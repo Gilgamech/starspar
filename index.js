@@ -168,6 +168,7 @@ console.log(JSON.stringify(inputPacket))
 	console.log("locResults " + JSON.stringify($locResults) + "locResults.locx " + $locResults[0].locx + " locResults.locy "+ $locResults[0].locy) 
 			player.x = $locResults[0].locx
 			player.y = $locResults[0].locy
+	console.log("player.x " + player.x + " player.y "+ player.y) 
 		}).catch(function(err) {
 			writeLog("Invalid locResults attempt: " + err.message)
 			console.log("Invalid locResults attempt.") 
