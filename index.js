@@ -172,6 +172,7 @@ if (request.method == "GET") {
 			console.log("Invalid locResults attempt.") 
 		})
 	}
+	console.log("player.x " + player.x + " player.y "+ player.y) 
 	if (player.x <= 0){player.x = 0}
 	if (player.y <= 0){player.y = 0}
 	if (player.x >= map.x){player.x = map.x}
