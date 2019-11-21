@@ -159,7 +159,7 @@ if (request.method == "GET") {
 	var $sessionID = inputPacket[1].split("=")[1]
 	var $sessionKey = inputPacket[2].split("=")[1]
 	$sessionID = $sessionID.replace(/;/g,"")
-//console.log(JSON.stringify(inputPacket))
+console.log(JSON.stringify(inputPacket))
 // Receive player keystrokes
 	player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
 
