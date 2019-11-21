@@ -165,6 +165,7 @@ console.log(JSON.stringify(inputPacket))
 
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
 		sparational.starspar.query("SELECT locx,locy FROM starsparLocations where objectname = '"+$user+"' AND mapname = '"+map.name+"'").then(([$locResults, metadata]) => {
+	console.log("locResults.locx " + $locResults.locx + " locResults.locy "+ $locResults.locy) 
 			player.x = $locResults.locx
 			player.y = $locResults.locy
 		}).catch(function(err) {
