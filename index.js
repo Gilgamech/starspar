@@ -194,7 +194,7 @@ if (request.method == "GET") {
 			console.log("Invalid updatePlayer attempt - SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+");") 
 		}).then(
 
-		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"'").then(([$PagesResults, metadata]) => {
+		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"';").then(([$PagesResults, metadata]) => {
 		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
 		demon.x = $demonResults.locx
 		demon.y = $demonResults.locy
@@ -224,7 +224,7 @@ if (request.method == "GET") {
 
 	}).catch(function(err) {
 		writeLog("Invalid select return attempt: " + err.message)
-		console.log("Invalid select return attempt.") 
+		console.log("Invalid select return attempt - SELECT * FROM starsparLocations where mapname = '"+map.name+"';") 
 	})//end Pages query
 )// end updatePlayer then
 	} else {
