@@ -182,7 +182,7 @@ if (request.method == "GET") {
 		sparational.starspar.query("SELECT insertProjectile('noob',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+");").then(([$PagesResults, metadata]) => {
 		}).catch(function(err) {
 			writeLog("Invalid insertProjectile attempt: " + err.message)
-			console.log("Invalid insertProjectile attempt.") 
+			console.log("Invalid insertProjectile attempt - SELECT insertProjectile('noob',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+");") 
 		})//end Pages query
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
@@ -191,7 +191,7 @@ if (request.method == "GET") {
 	// Store player location, send back all object locations and player scores for the player's map.
 		sparational.starspar.query("SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+");").catch(function(err) {
 			writeLog("Invalid updatePlayer attempt: " + err.message)
-			console.log("Invalid updatePlayer attempt.") 
+			console.log("Invalid updatePlayer attempt - SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+");") 
 		}).then(
 
 		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"'").then(([$PagesResults, metadata]) => {
