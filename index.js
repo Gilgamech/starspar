@@ -201,8 +201,8 @@ console.log(JSON.stringify(inputPacket))
 		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"';").then(([$PagesResults, metadata]) => {
 		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
 	console.log("demonResults " + JSON.stringify($demonResults) + "locResults.locx " + $demonResults[0].locx + " locResults.locy "+ $demonResults[0].locy) 
-		demon.x = $demonResults.locx
-		demon.y = $demonResults.locy
+		demon.x = $demonResults[0].locx
+		demon.y = $demonResults[0].locy
 		
         // If collision
         if (player.x <= (demon.x + 32)
