@@ -179,7 +179,7 @@ console.log(JSON.stringify(inputPacket))
 
 	if (player.mouseClicked == true && $clickCheck == false){
 		$clickCheck = true
-		sparational.starspar.query("SELECT insertProjectile('noob',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+");").then(([$PagesResults, metadata]) => {
+		sparational.starspar.query("SELECT insertProjectile('"+$user+"','"+map.name+"',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+");").then(([$PagesResults, metadata]) => {
 		}).catch(function(err) {
 			console.log("Invalid insertProjectile attempt - SELECT insertProjectile('noob',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+"); - "+ err.message)
 		})//end Pages query
