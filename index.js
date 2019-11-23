@@ -159,7 +159,6 @@ if (request.method == "GET") {
 	var $sessionID = inputPacket[1].split("=")[1]
 	var $sessionKey = inputPacket[2].split("=")[1]
 	$sessionID = $sessionID.replace(/;/g,"")
-console.log(JSON.stringify(inputPacket))
 // Receive player keystrokes
 	var player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
 
@@ -181,13 +180,14 @@ console.log(JSON.stringify(inputPacket))
 		$clickCheck = true
 		sparational.starspar.query("SELECT insertProjectile('"+$user+"','"+map.name+"',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+");").then(([$PagesResults, metadata]) => {
 		}).catch(function(err) {
-			console.log("Invalid insertProjectile attempt - SELECT insertProjectile('noob',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+"); - "+ err.message)
+			writeLog("Invalid insertProjectile attempt - SELECT insertProjectile('noob',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+"); - "+ err.message)
 		})//end Pages query
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
 	}
 
 	// Store player location, send back all object locations and player scores for the player's map.
+	console.log("SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+", "+player.updatelocation+");")
 		sparational.starspar.query("SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+", "+player.updatelocation+");").catch(function(err) {
 		writeLog("Invalid updatePlayer attempt - updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+"); - " + err.message)
 	})//end Pages query
