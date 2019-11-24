@@ -172,11 +172,6 @@ if (request.method == "GET") {
 			console.log("Invalid locResults attempt.") 
 		})
 	}
-	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
-		player ={"updatelocation":0,"speed":250,"mouseClicked":false,"mouseX":5000,"mouseY":5000,"y":5000,"x":5000}
-		player.x = parseInt(player.x)
-		player.y = parseInt(player.y)
-	}
 	//console.log("player.x " + player.x + " player.y "+ player.y) 
 	if (player.x <= 0){player.x = 0}
 	if (player.y <= 0){player.y = 0}
