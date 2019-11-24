@@ -173,7 +173,6 @@ if (request.method == "GET") {
 			console.log("Invalid locResults attempt.") 
 		})
 	}
-	//console.log("player.x " + player.x + " player.y "+ player.y) 
 	if (player.x <= 0){player.x = 0}
 	if (player.y <= 0){player.y = 0}
 	if (player.x >= map.x){player.x = map.x}
@@ -190,7 +189,6 @@ if (request.method == "GET") {
 	}
 
 	// Store player location, send back all object locations and player scores for the player's map.
-		sparational.starspar.query("SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0);").then(([$PagesResults, metadata]) => {
 		sparational.starspar.query("SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+","+player.updatelocation+");").catch(function(err) {
 		writeLog("Invalid updatePlayer attempt - updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+","+player.updatelocation+"); - " + err.message)
 	})//end Pages query
@@ -225,7 +223,6 @@ if (request.method == "GET") {
 	}).catch(function(err) {
 		writeLog("Invalid select return attempt - UPDATE objectName='"+$user+"';SELECT  mapname = '"+map.name+"' AND  locX > "+player.x+"-2000 AND "+player.x+"+2000 > locX AND locY > "+player.y+"-2000 AND "+player.y+"+2000 > locY OR mapname = '"+map.name+"' AND objectName = 'demon' ; - " + err.message)
 		console.log("Invalid select return attempt")
-	})//end Pages query
 	})//end Pages query
 	} else {
 		writeLog('Invalid request.'); 
