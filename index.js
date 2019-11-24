@@ -185,7 +185,7 @@ if (request.method == "GET") {
 		$clickCheck = true
 		sparational.starspar.query("SELECT insertProjectile('"+$user+"','"+map.name+"',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+");").then(([$PagesResults, metadata]) => {
 		}).catch(function(err) {
-			writeLog("Invalid insertProjectile attempt - SELECT insertProjectile('noob',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+"); - "+ err.message)
+			writeLog("Invalid insertProjectile attempt - SELECT insertProjectile('"+$user+"','"+map.name+"',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+"); - "+ err.message)
 		})//end Pages query
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
@@ -225,7 +225,7 @@ if (request.method == "GET") {
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 
 	}).catch(function(err) {
-		writeLog("Invalid select return attempt - UPDATE starsparLocations SET ticksremaining=100 WHERE objectName='"+$user+"';SELECT * FROM starsparLocations WHERE mapname = '"+map.name+"' AND ticksremaining > 0 AND locX > "+player.x-2000+" AND "+player.x+2000+" > locX AND locY > "+player.y-2000+" AND "+player.y-2000+" > locY OR mapname = '"+map.name+"' AND objectName = 'demon'; - " + err.message)
+		writeLog("Invalid select return attempt - objectName='"+$user+"'; mapname = '"+map.name+"' locX > "+player.x-2000+" AND "+player.x+2000+" > locX AND locY > "+player.y-2000+" AND "+player.y-2000+" > locY OR mapname = '"+map.name+"' AND objectName = 'demon'; - " + err.message)
 		console.log("Invalid select return attempt.") 
 	})//end Pages query
 	} else {
