@@ -225,7 +225,7 @@ if (request.method == "GET") {
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 
 	}).catch(function(err) {
-		writeLog("Invalid select return attempt - objectName='"+$user+"'; mapname = '"+map.name+"' locX > "+player.x-2000+" AND "+player.x+2000+" > locX AND locY > "+player.y-2000+" AND "+player.y-2000+" > locY OR mapname = '"+map.name+"' AND objectName = 'demon'; - " + err.message)
+		writeLog("Invalid select return attempt - objectName='"+$user+"'; mapname = '"+map.name+"' "+player.x+2000+" >  locX > "+player.x-2000+" AND "+player.y-2000+" > locY > "+player.y-2000+" mapname = '"+map.name+"' ; - " + err.message)
 		console.log("Invalid select return attempt.") 
 	})//end Pages query
 	} else {
