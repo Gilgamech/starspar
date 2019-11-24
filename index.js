@@ -163,7 +163,7 @@ if (request.method == "GET") {
 	var player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
 
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
-		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0;").then(([$locResults, metadata]) => {
+		sparational.starspar.query("UPDATE starsparLocations SET ticksremaining=100 WHERE objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0;").then(([$locResults, metadata]) => {
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
 			response.end($keyCallback+":scores:"+JSON.stringify($locResults))
 		}).catch(function(err) {
