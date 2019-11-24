@@ -164,7 +164,7 @@ if (request.method == "GET") {
 
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
 		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0;").then(([$locResults, metadata]) => {
-			$playerResults = $PagesResults.filter(o => {return o.objectname==$user})[0]
+			$playerResults = $locResults.filter(o => {return o.objectname==$user})[0]
 			player.x = $playerResults[0].locx
 			player.y = $playerResults[0].locy
 			player.updatelocation = 1
