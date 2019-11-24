@@ -175,7 +175,7 @@ if (request.method == "GET") {
 			player.x = 5000
 			player.y = 5000
 	}
-	console.log("player.x " + player.x + " player.y "+ player.y) 
+	console.log("player.x " + player.x + " player.y "+ player.y + " -2000: player.x " + player.x-2000 + " player.y "+ player.y-2000) 
 	if (player.x <= 0){player.x = 0}
 	if (player.y <= 0){player.y = 0}
 	if (player.x >= map.x){player.x = map.x}
@@ -225,8 +225,8 @@ if (request.method == "GET") {
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 
 	}).catch(function(err) {
-		writeLog("Invalid select return attempt - objectName='"+$user+"'; mapname = '"+map.name+"' "+player.x+2000+" >  locX > "+player.x-2000+" AND "+player.y-2000+" > locY > "+player.y-2000+" mapname = '"+map.name+"' ; - " + err.message)
-		console.log("Invalid select return attempt - objectName='"+$user+"'; mapname = '"+map.name+"' "+player.x+2000+" >  locX > "+player.x-2000+" AND "+player.y-2000+" > locY > "+player.y+2000+" mapname = '"+map.name+"' ; - " + err.message)
+		writeLog("Invalid select return attempt - objectName='"+$user+"'; mapname = '"+map.name+"' "+player.x+2000+" >  locX > "+player.x-2000+" AND "+player.y - 2000+" > locY > "+player.y+2000+" mapname = '"+map.name+"' ; - " + err.message)
+		console.log("Invalid select return attempt - objectName='"+$user+"'; mapname = '"+map.name+"' "+player.x+2000+" >  locX > "+player.x-2000+" AND "+player.y - 2000+" > locY > "+player.y+2000+" mapname = '"+map.name+"' ; - " + err.message)
 	})//end Pages query
 	} else {
 		writeLog('Invalid request.'); 
