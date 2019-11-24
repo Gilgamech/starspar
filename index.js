@@ -163,11 +163,14 @@ if (request.method == "GET") {
 	var player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
 
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
-		sparational.starspar.query("SELECT * FROM starsparLocations where objectname = '"+$user+"' AND mapname = '"+map.name+"'").then(([$locResults, metadata]) => {
-			player.x = $locResults[0].locx
-			player.y = $locResults[0].locy
+		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0;").then(([$locResults, metadata]) => {
+			$playerResults = $PagesResults.filter(o => {return o.objectname==$user})[0]
+			player.x = $playerResults[0].locx
+			player.y = $playerResults[0].locy
 			player.updatelocation = 1
 			console.log("player.x " + player.x + " player.y "+ player.y) 
+            var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
+			response.end($keyCallback+":scores:"+JSON.stringify($locResults))
 		}).catch(function(err) {
 			writeLog("Invalid locResults attempt: " + err.message)
 			console.log("Invalid locResults attempt.") 
@@ -201,7 +204,6 @@ if (request.method == "GET") {
             // choose & store demon location
             resetDemon($user);
         };//end collision calculations
-            var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
 
 	}).catch(function(err) {
 		writeLog("Invalid select return attempt - UPDATE objectName='"+$user+"';SELECT  mapname = '"+map.name+"' AND  locX > "+player.x+"-2000 AND "+player.x+"+2000 > locX AND locY > "+player.y+"-2000 AND "+player.y+"+2000 > locY OR mapname = '"+map.name+"' AND objectName = 'demon' ; - " + err.message)
@@ -223,6 +225,7 @@ if (request.method == "GET") {
 
 	// Store player location, send back all object locations and player scores for the player's map.
 		sparational.starspar.query("SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0);").then(([$PagesResults, metadata]) => {
+            var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 		}).catch(function(err) {
 			writeLog("Invalid updatePlayer2 attempt - SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0); - " + err.message)
