@@ -163,10 +163,9 @@ if (request.method == "GET") {
 	var player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
 
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
-		sparational.starspar.query("SELECT locx,locy FROM starsparLocations where objectname = '"+$user+"' AND mapname = '"+map.name+"'").then(([$locResults, metadata]) => {
-			player.x = $locResults[0].locx
-			player.y = $locResults[0].locy
-	console.log("player.x " + player.x + " player.y "+ player.y) 
+		sparational.starspar.query("SELECT * FROM starsparLocations where objectname = '"+$user+"' AND mapname = '"+map.name+"'").then(([$locResults, metadata]) => {
+			player = $locResults[0]
+			console.log("player.x " + player.x + " player.y "+ player.y) 
 		}).catch(function(err) {
 			writeLog("Invalid locResults attempt: " + err.message)
 			console.log("Invalid locResults attempt.") 
