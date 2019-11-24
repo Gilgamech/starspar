@@ -185,8 +185,8 @@ if (request.method == "GET") {
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
 	}
-	sparational.starspar.query("UPDATE starsparLocations SET ticksremaining=100 WHERE objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0;")
-	
+    sparational.starspar.query("UPDATE starsparLocations SET ticksremaining=100 WHERE objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0;")	
+
 	//gameTick
 	var now = Date.now();
 	var delta = now - then;
