@@ -194,8 +194,7 @@ if (request.method == "GET") {
 		sparational.starspar.query("SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+","+player.updatelocation+");").catch(function(err) {
 		writeLog("Invalid updatePlayer attempt - updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+","+player.updatelocation+"); - " + err.message)
 	})//end Pages query
-		console.log("player.x " + player.x + " player.y "+ player.y + " -2000: player.x " + player.x-2000 + " player.y "+ player.y-2000) 
-		sparational.starspar.query("UPDATE starsparLocations SET ticksremaining=100 WHERE objectName='"+$user+"';SELECT * FROM starsparLocations WHERE mapname = '"+map.name+"' AND ticksremaining > 0 AND locX > "+player.x-2000+" AND "+player.x+2000+" > locX AND locY > "+player.y-2000+" AND "+player.y+2000+" > locY OR mapname = '"+map.name+"' AND objectName = 'demon'").then(([$PagesResults, metadata]) => {
+		sparational.starspar.query("UPDATE starsparLocations SET ticksremaining=100 WHERE objectName='"+$user+"';SELECT * FROM starsparLocations WHERE mapname = '"+map.name+"' AND ticksremaining > 0 AND locX > "+player.x+"-2000 AND "+player.x+"+2000 > locX AND locY > "+player.y+"-2000 AND "+player.y+"+2000 > locY OR mapname = '"+map.name+"' AND objectName = 'demon'").then(([$PagesResults, metadata]) => {
 		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
 		demon.x = $demonResults.locx
 		demon.y = $demonResults.locy
@@ -224,8 +223,8 @@ if (request.method == "GET") {
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 
 	}).catch(function(err) {
-		writeLog("Invalid select return attempt - objectName='"+$user+"'; mapname = '"+map.name+"' "+player.x+2000+" >  locX > "+player.x-2000+" AND "+player.y - 2000+" > locY > "+player.y+2000+" mapname = '"+map.name+"' ; - " + err.message)
-		console.log("Invalid select return attempt - objectName='"+$user+"'; mapname = '"+map.name+"' "+player.x+2000+" >  locX > "+player.x-2000+" AND "+player.y - 2000+" > locY > "+player.y+2000+" mapname = '"+map.name+"' ; - " + err.message)
+		writeLog("Invalid select return attempt - objectName='"+$user+"'; mapname = '"+map.name+"' locX = "+player.x+" AND  locY = "+player.y" mapname = '"+map.name+"' ; - " + err.message)
+		console.log("Invalid select return attempt")
 	})//end Pages query
 	} else {
 		writeLog('Invalid request.'); 
