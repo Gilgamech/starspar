@@ -172,9 +172,7 @@ if (request.method == "GET") {
 		})
 	}
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
-		player = {}
-		player.x = 5000
-		player.y = 5000
+		player ={"updatelocation":0,"speed":250,"mouseClicked":false,"mouseX":5000,"mouseY":5000,"y":5000,"x":5000}
 	}
 	console.log("player.x " + player.x + " player.y "+ player.y + " -2000: player.x " + player.x-2000 + " player.y "+ player.y-2000) 
 	if (player.x <= 0){player.x = 0}
