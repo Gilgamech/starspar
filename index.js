@@ -163,16 +163,14 @@ if (request.method == "GET") {
 	var player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
 
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
-		sparational.starspar.query("SELECT * FROM starsparLocations where objectname = '"+$user+"' AND mapname = '"+map.name+"'").then(([$locResults, metadata]) => {
-			player.x = $locResults[0].locx
-			player.y = $locResults[0].locy
-			player.updatelocation = 1
-			console.log("player.x " + player.x + " player.y "+ player.y) 
+		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0;").then(([$locResults, metadata]) => {
+            var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
+			response.end($keyCallback+":scores:"+JSON.stringify($locResults))
 		}).catch(function(err) {
 			writeLog("Invalid locResults attempt: " + err.message)
 			console.log("Invalid locResults attempt.") 
 		})
-	}
+	} else {//if player.x and player.y are known
 	if (player.x <= 0){player.x = 0}
 	if (player.y <= 0){player.y = 0}
 	if (player.x >= map.x){player.x = map.x}
@@ -229,6 +227,7 @@ if (request.method == "GET") {
 		writeLog("Invalid select return attempt - UPDATE objectName='"+$user+"';SELECT  mapname = '"+map.name+"' AND  locX > "+player.x+"-2000 AND "+player.x+"+2000 > locX AND locY > "+player.y+"-2000 AND "+player.y+"+2000 > locY OR mapname = '"+map.name+"' AND objectName = 'demon' ; - " + err.message)
 		console.log("Invalid select return attempt")
 	})//end Pages query
+} // else if player.x and player.y are known.
 	} else {
 		writeLog('Invalid request.'); 
 		response.end('Invalid request.')
