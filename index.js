@@ -186,6 +186,25 @@ if (request.method == "GET") {
 		$clickCheck = false
 	}
 
+		sparational.starspar.query("UPDATE starsparLocations SET ticksremaining=100 WHERE objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0;").then(([$PagesResults, metadata]) => {
+		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
+		demon.x = $demonResults.locx
+		demon.y = $demonResults.locy
+		
+        // If collision
+        if (player.x <= (demon.x + 32)
+        && demon.x <= (player.x + 32)
+        && player.y <= (demon.y + 32)
+        && demon.y <= (player.y + 32)) {
+            // choose & store demon location
+            resetDemon($user);
+        };//end collision calculations
+
+	}).catch(function(err) {
+		writeLog("Invalid select return attempt - UPDATE objectName='"+$user+"';SELECT  mapname = '"+map.name+"' AND  locX > "+player.x+"-2000 AND "+player.x+"+2000 > locX AND locY > "+player.y+"-2000 AND "+player.y+"+2000 > locY OR mapname = '"+map.name+"' AND objectName = 'demon' ; - " + err.message)
+		console.log("Invalid select return attempt")
+	})//end Pages query
+	
 	//gameTick
 	var now = Date.now();
 	var delta = now - then;
@@ -201,19 +220,6 @@ if (request.method == "GET") {
 
 	// Store player location, send back all object locations and player scores for the player's map.
 		sparational.starspar.query("SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0);").then(([$PagesResults, metadata]) => {
-			$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
-			demon.x = $demonResults.locx
-			demon.y = $demonResults.locy
-			
-			// If collision
-			if (player.x <= (demon.x + 32)
-			&& demon.x <= (player.x + 32)
-			&& player.y <= (demon.y + 32)
-			&& demon.y <= (player.y + 32)) {
-				// choose & store demon location
-				resetDemon($user);
-			};//end collision calculations
-
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 		}).catch(function(err) {
