@@ -171,6 +171,10 @@ if (request.method == "GET") {
 			console.log("Invalid locResults attempt.") 
 		})
 	}
+	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
+			player.x = 5000
+			player.y = 5000
+	}
 	if (player.x <= 0){player.x = 0}
 	if (player.y <= 0){player.y = 0}
 	if (player.x >= map.x){player.x = map.x}
