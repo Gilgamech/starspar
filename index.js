@@ -175,6 +175,7 @@ if (request.method == "GET") {
 			player.x = 5000
 			player.y = 5000
 	}
+	console.log("player.x " + player.x + " player.y "+ player.y) 
 	if (player.x <= 0){player.x = 0}
 	if (player.y <= 0){player.y = 0}
 	if (player.x >= map.x){player.x = map.x}
