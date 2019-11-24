@@ -226,6 +226,7 @@ if (request.method == "GET") {
 		writeLog("Invalid select return attempt - UPDATE objectName='"+$user+"';SELECT  mapname = '"+map.name+"' AND  locX > "+player.x+"-2000 AND "+player.x+"+2000 > locX AND locY > "+player.y+"-2000 AND "+player.y+"+2000 > locY OR mapname = '"+map.name+"' AND objectName = 'demon' ; - " + err.message)
 		console.log("Invalid select return attempt")
 	})//end Pages query
+	})//end Pages query
 	} else {
 		writeLog('Invalid request.'); 
 		response.end('Invalid request.')
