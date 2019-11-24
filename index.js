@@ -220,6 +220,11 @@ if (request.method == "GET") {
 
 	// Store player location, send back all object locations and player scores for the player's map.
 		sparational.starspar.query("SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0);").then(([$PagesResults, metadata]) => {
+			$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
+			demon.x = $demonResults.locx
+			demon.y = $demonResults.locy
+			
+			
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 		}).catch(function(err) {
