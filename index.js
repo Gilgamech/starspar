@@ -190,7 +190,7 @@ if (request.method == "GET") {
 		sparational.starspar.query("SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+","+player.updatelocation+");").catch(function(err) {
 		writeLog("Invalid updatePlayer attempt - updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+","+player.updatelocation+"); - " + err.message)
 	})//end Pages query
-		sparational.starspar.query("UPDATE starsparLocations SET ticksremaining=100 WHERE objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 AND locX > "+player.x-2000+" AND "+player.x-2000+" > locX AND locY > "+player.y-2000+" AND "+player.y-2000+" > locY OR mapname = '"+map.name+"' AND objectName = 'demon';").then(([$PagesResults, metadata]) => {
+		sparational.starspar.query("UPDATE starsparLocations SET ticksremaining=100 WHERE objectName='"+$user+"';SELECT * FROM starsparLocations WHERE mapname = '"+map.name+"' AND ticksremaining > 0 AND locX > "+player.x-2000+" AND "+player.x+2000+" > locX AND locY > "+player.y-2000+" AND "+player.y-2000+" > locY OR mapname = '"+map.name+"' AND objectName = 'demon'").then(([$PagesResults, metadata]) => {
 		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
 		demon.x = $demonResults.locx
 		demon.y = $demonResults.locy
