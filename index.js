@@ -166,6 +166,7 @@ if (request.method == "GET") {
 		sparational.starspar.query("SELECT locx,locy FROM starsparLocations where objectname = '"+$user+"' AND mapname = '"+map.name+"'").then(([$locResults, metadata]) => {
 			player.x = $locResults[0].locx
 			player.y = $locResults[0].locy
+	console.log("player.x " + player.x + " player.y "+ player.y) 
 		}).catch(function(err) {
 			writeLog("Invalid locResults attempt: " + err.message)
 			console.log("Invalid locResults attempt.") 
@@ -173,8 +174,10 @@ if (request.method == "GET") {
 	}
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
 		player ={"updatelocation":0,"speed":250,"mouseClicked":false,"mouseX":5000,"mouseY":5000,"y":5000,"x":5000}
+		player.x = parseInt(player.x)
+		player.y = parseInt(player.y)
 	}
-	console.log("player.x " + player.x + " player.y "+ player.y + " -2000: player.x " + player.x-2000 + " player.y "+ player.y-2000) 
+	//console.log("player.x " + player.x + " player.y "+ player.y) 
 	if (player.x <= 0){player.x = 0}
 	if (player.y <= 0){player.y = 0}
 	if (player.x >= map.x){player.x = map.x}
