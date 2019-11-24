@@ -184,7 +184,7 @@ if (request.method == "GET") {
 		sparational.starspar.query("SELECT insertProjectile('"+$user+"','"+map.name+"',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+");").then(([$PagesResults, metadata]) => {
 		}).catch(function(err) {
 			writeLog("Invalid insertProjectile attempt - SELECT insertProjectile('"+$user+"','"+map.name+"',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+"); - "+ err.message)
-		})//end Pages query
+		})//end insertProjectile query
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
 	}
@@ -223,7 +223,7 @@ if (request.method == "GET") {
 			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 
 	}).catch(function(err) {
-		writeLog("Invalid select return attempt - SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0); - " + err.message)
+		writeLog("Invalid select return attempt - UPDATE objectName='"+$user+"';SELECT  mapname = '"+map.name+"' AND  locX > "+player.x+"-2000 AND "+player.x+"+2000 > locX AND locY > "+player.y+"-2000 AND "+player.y+"+2000 > locY OR mapname = '"+map.name+"' AND objectName = 'demon' ; - " + err.message)
 		console.log("Invalid select return attempt")
 	})//end Pages query
 	} else {
@@ -247,16 +247,4 @@ if (request.method == "GET") {
 writeLog('Service is running on port ' + $servicePort);
 console.log($serviceName + ' is running on port ' + $servicePort);
 //}
-
-/*
-Logout
-
-Auth
-- Read strings from cookie, check against DB, verify IP and other deets.
-- "It looks like you were logged in at a different location. Could you verify your login?"
-
-SessionID - Hash of username, IP, port, other identifying info.
-SessionKey - Hash of sessionID, GoogleAPIKey, other API keys, other data. (hash whole webpage as key? Or just with key?)
-
-*/
 
