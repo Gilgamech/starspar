@@ -188,15 +188,6 @@ if (request.method == "GET") {
 		$clickCheck = false
 	}
 
-	// Store player location, send back all object locations and player scores for the player's map.
-		sparational.starspar.query("SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0);").then(([$PagesResults, metadata]) => {
-			console.log(JSON.stringify($PagesResults))
-		}).catch(function(err) {
-			writeLog("Invalid updatePlayer attempt - SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0); - " + err.message)
-		})//end Pages query
-		sparational.starspar.query("SELECT updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+","+player.updatelocation+");").catch(function(err) {
-			writeLog("Invalid updatePlayer attempt - updatePlayer('"+$user+"','"+map.name+"',"+player.x+", "+player.y+","+player.updatelocation+"); - " + err.message)
-		})//end Pages query
 		sparational.starspar.query("UPDATE starsparLocations SET ticksremaining=100 WHERE objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0;").then(([$PagesResults, metadata]) => {
 		$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
 		demon.x = $demonResults.locx
@@ -211,10 +202,16 @@ if (request.method == "GET") {
             resetDemon($user);
         };//end collision calculations
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
-			//gameTick
-  var now = Date.now();
-  var delta = now - then;
-  $cumulativeTick += delta;
+
+	}).catch(function(err) {
+		writeLog("Invalid select return attempt - UPDATE objectName='"+$user+"';SELECT  mapname = '"+map.name+"' AND  locX > "+player.x+"-2000 AND "+player.x+"+2000 > locX AND locY > "+player.y+"-2000 AND "+player.y+"+2000 > locY OR mapname = '"+map.name+"' AND objectName = 'demon' ; - " + err.message)
+		console.log("Invalid select return attempt")
+	})//end Pages query
+	
+	//gameTick
+	var now = Date.now();
+	var delta = now - then;
+	$cumulativeTick += delta;
 	if ($cumulativeTick > $tickDelay) {
 		$cumulativeTick -= $tickDelay;
 		sparational.starspar.query("SELECT gameTick();").then(([$PagesResults, metadata]) => {
@@ -223,12 +220,14 @@ if (request.method == "GET") {
 			console.log("Invalid gameTick attempt.") 		
 		})
 	}	
-			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 
-	}).catch(function(err) {
-		writeLog("Invalid select return attempt - UPDATE objectName='"+$user+"';SELECT  mapname = '"+map.name+"' AND  locX > "+player.x+"-2000 AND "+player.x+"+2000 > locX AND locY > "+player.y+"-2000 AND "+player.y+"+2000 > locY OR mapname = '"+map.name+"' AND objectName = 'demon' ; - " + err.message)
-		console.log("Invalid select return attempt")
-	})//end Pages query
+	// Store player location, send back all object locations and player scores for the player's map.
+		sparational.starspar.query("SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0);").then(([$PagesResults, metadata]) => {
+			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
+		}).catch(function(err) {
+			writeLog("Invalid updatePlayer2 attempt - SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0); - " + err.message)
+		})//end Pages query
+
 	} else {
 		writeLog('Invalid request.'); 
 		response.end('Invalid request.')
