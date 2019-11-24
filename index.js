@@ -186,12 +186,7 @@ if (request.method == "GET") {
 		$clickCheck = false
 	}
 
-	sparational.starspar.query("UPDATE starsparLocations SET ticksremaining=100 WHERE objectName='"+$user+"';").then(([$PagesResults, metadata]) => {
-
-	}).catch(function(err) {
-		writeLog("Invalid select return attempt - UPDATE objectName='"+$user+"';SELECT  mapname = '"+map.name+"' AND  locX > "+player.x+"-2000 AND "+player.x+"+2000 > locX AND locY > "+player.y+"-2000 AND "+player.y+"+2000 > locY OR mapname = '"+map.name+"' AND objectName = 'demon' ; - " + err.message)
-		console.log("Invalid select return attempt")
-	})//end Pages query
+	sparational.starspar.query("UPDATE starsparLocations SET ticksremaining=100 WHERE objectName='"+$user+"';SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0;")
 	
 	//gameTick
 	var now = Date.now();
