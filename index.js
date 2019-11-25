@@ -29,103 +29,6 @@ var $clickCheck = false;
 //}
 
 //{ functions
-String.prototype.octEncode = function(){
-    var hex, i;
- 
-    var result = "";
-    for (i=0; i<this.length; i++) {
-        hex = this.charCodeAt(i).toString(8);
-        result += ("000"+hex).slice(-4);
-    }
- 
-    return result
-}
-String.prototype.octDecode = function(){
-    var j;
-    var hexes = this.match(/.{1,4}/g) || [];
-    var back = "";
-    for(j = 0; j<hexes.length; j++) {
-        back += String.fromCharCode(parseInt(hexes[j], 8));
-    }
- 
-    return back;
-}
-function swimmersEncode($swimmers){
-    return $swimmers .octEncode().replace(/0/g,"~-~ ").replace(/1/g,"-~- ").replace(/2/g,"   ").replace(/3/g,"O_|").replace(/4/g,"o__").replace(/5/g,"o,").replace(/6/g,"o_").replace(/7/g,",")
-}
-function swimmersDecode($swimmers){
-    return $swimmers.replace(/\~-~ /g,0).replace(/-~- /g,1).replace(/   /g,2).replace(/O_\|/g,3).replace(/o__/g,4).replace(/o,/g,5).replace(/o\_/g,6).replace(/,/g,7).octDecode() 
-}var $page_views = 0;
-
-function refreshKey($user,$sessionID,$sessionKey,$callback) {
-	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
-//console.log(JSON.stringify($SessionResults))
-		if ($user==$SessionResults[0].sessionuser) {
-
-
-		$sessionID = getBadPW()
-		$sessionKey = getBadPW()
-		$output = ""+$user+":" + $sessionID +":" + $sessionKey 
-		sparational.sequelize.query("UPDATE Sessions SET logintime = current_timestamp, sessionid = '"+$sessionID+"', sessionkey = '"+$sessionKey+"' WHERE sessionuser='"+$user+"';INSERT INTO Sessions (sessionuser, sessionid,sessionkey) SELECT '"+$user+"','"+$sessionID+"','"+$sessionKey+"' WHERE NOT EXISTS (SELECT 1 FROM Sessions WHERE sessionuser='"+$user+"');").then(([$SessionResults, metadata]) => {
-		
-			var $output = $user + ":" + $sessionID + ":" + $sessionKey
-			$callback($output)
-
-		}).catch(function(err) {
-			var $output = "Invalid refreshKey attempt: "+$user
-			writeLog($output+" error: "+ err.message +" - sessionID: " + $sessionID)
-			$callback($output)
-		})//end Pages query
-
-
-		} else {
-			var $output = "Invalid starspar attempt: bad session key for user: "+$user
-			writeLog($output+" sessionID: " + $sessionID)
-			$callback($output)
-		}//end if user
-	}).catch(function(err) {
-		var $output = "Session error: "+err.message
-		writeLog($output)
-		$callback($output)
-	});//end Session query
-
-};
-
-function checkKey($user,$sessionID,$sessionKey,$callback) {
-	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$sessionuser, metadata]) => {
-//console.log(JSON.stringify($sessionuser))
-		if ($user==$sessionuser[0]) {
-		var $output = $sessionuser[0] + ":" + $sessionID + ":" + $sessionKey
-		$callback($output)
-
-		} else {
-			var $output = "Invalid checkKey attempt: "+$user
-			writeLog($output+" - sessionID: " + $sessionID)
-			$callback($output)
-		}//end if user
-	}).catch(function(err) {
-		var $output = "Invalid checkKey attempt: "+$user
-		writeLog($output+" error: "+ err.message +" - sessionID: " + $sessionID)
-		$callback($output)
-	});//end Session query
-
-};
-
-function resetDemon($user) {
-	// Throw the demon somewhere on the screen randomly
-	demon.x = Math.round(32 + (Math.random() * (map.x - 64)),4); //canvas.width = map.width
-	demon.y = Math.round(32 + (Math.random() * (map.y - 64)),4); //canvas.height = map.height
-	//Store demon location and increment & store the player's score
-	sparational.starspar.query("SELECT resetDemon('"+$user+"');").then(([$PagesResults, metadata]) => {
-		console.log("resetDemon to x:"+demon.x+" y:"+demon.y) 
-		
-	}).catch(function(err) {
-		writeLog("Invalid resetDemon attempt: " + err.message)
-		console.log("Invalid resetDemon attempt.") 
-	})//end Pages query
-	
-};
-
 function getBadPW() { return Math.random().toString(36).slice(-20).slice(2); };
 function writeLog($msg) { 
 	$msg = $msg.toString().replace(/'/g,"~~")
@@ -167,7 +70,7 @@ if (request.method == "GET") {
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
 			response.end($keyCallback+":scores:"+JSON.stringify($locResults))
 		}).catch(function(err) {
-			writeLog("Invalid locResults attempt: " + err.message)
+			writeLog("Invalid locResults attempt - SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"' - " + err.message)
 			console.log("Invalid locResults attempt.") 
 		})
 	} else {//if player.x and player.y are known
