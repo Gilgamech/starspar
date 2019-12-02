@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 198
+$gameData.ver = 199
 
 //{ Init vars
 var $http = require("http");
@@ -56,22 +56,14 @@ function writeLog($msg) {
 };
 
 function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,objectOwner,updateLocation,objectType) {
+	console.log("addObject:"+objectName+","+mapName+","+locX+","+locY+","+hp+","+ammo+","+score+","+ticksremaining+","+objectOwner+","+updateLocation+","+objectType)
 	//Spawn the object
-	$gameObjects[$gameObjects.length].objectName = objectName
-	$gameObjects[$gameObjects.length].mapName = mapName
-	$gameObjects[$gameObjects.length].locX = locX
-	$gameObjects[$gameObjects.length].locY = locY
-	$gameObjects[$gameObjects.length].hp = hp
-	$gameObjects[$gameObjects.length].ammo = ammo
-	$gameObjects[$gameObjects.length].score = score
-	$gameObjects[$gameObjects.length].ticksremaining = ticksremaining
-	$gameObjects[$gameObjects.length].objectOwner = objectOwner
-	$gameObjects[$gameObjects.length].updateLocation = updateLocation
-	$gameObjects[$gameObjects.length].objectType = objectType
+	$r.push({'objectname':'test','mapname':'noob','locx':2000,'locy':4000,'hp':100,'ammo':8000,'score':7000,'ticksremaining':-1,'objectOwner':'test','updateLocation':0,'objectType':'test'})
 	
-	//If projectile, remove ammo from the owner.
+	//If projectile, remove am	mo from the owner.
 	if (objectType = 'projectile') {
-		$gameObjects[objectOwner].ammo--
+		var object = $gameObjects.filter(o => {return o.objectname == objectOwner})[0]
+		object.ammo--
 	}
 
 };
