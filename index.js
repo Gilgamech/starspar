@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 195
+$gameData.ver = 196
 
 //{ Init vars
 var $http = require("http");
@@ -154,7 +154,6 @@ if (request.method == "GET") {
 		} else {
 			console.log("Player at x:"+player.x+" y:"+player.y+" but server has x:"+object.x+" y:"+object.y)
 		}
-	}
 
 	if (player.mouseClicked == true && $clickCheck == false){
 		$clickCheck = true
