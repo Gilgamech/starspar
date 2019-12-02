@@ -54,6 +54,14 @@ function writeLog($msg) {
 		console.log(err); 
 	}) //	.then()
 };
+function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,objectOwner,updateLocation,objectType) {
+};
+
+function gameSave() { 
+};
+
+function gameTick() {
+};
 //}
 
 //{ StarSpar
@@ -83,11 +91,7 @@ if (request.method == "GET") {
 	$gameTick += delta;
 	if ($gameTick > $tickDelay) {
 		$gameTick -= $tickDelay;
-        sparational.starspar.query("SELECT gameTick();").then(([$PagesResults, metadata]) => {
-        }).catch(function(err) {
-            writeLog("Invalid gameTick attempt: " + err.message)
-            console.log("Invalid gameTick attempt.")         
-        })	
+        gameTick();
 	}
 var $returnGameObjects
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
@@ -102,6 +106,7 @@ var $returnGameObjects
 
 	if (player.mouseClicked == true && $clickCheck == false){
 		$clickCheck = true
+		addObject('projectile',map.name,player.x,player.y,100,player.mouseX,player.mouseY,100,$user,0,'projectile');
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
 	}
