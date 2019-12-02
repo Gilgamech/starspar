@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 239
+$gameData.ver = 240
 
 //{ Init vars
 var $http = require("http");
@@ -25,7 +25,7 @@ projectileSpeed = 3;
 //How fast the game should update.
 var $ticks = 10
 var $tickDelay = (1000/$ticks)
-var $saves = 10
+var $saves = 60
 var $saveDelay = (1000*$saves)
 var then = Date.now();
 var $gameTick = 0;
@@ -71,21 +71,22 @@ function gameSave() {
 	for(row = 0;row > $gameObjects.filter(o => {return o.updateLocation == 1});row++) {
 		if (typeof $gameObjects[row].id == "undefined"){
 			sparational.sequelize.query("INSERT INTO starsparLocations (objectName, mapName, locX, locY, hp, ammo, score, ticksremaining,objectOwner,updateLocation,objectType) SELECT '"+$gameObjects[row].objectName+"', '"+$gameObjects[row].mapName+"', '"+$gameObjects[row].locX+"', '"+$gameObjects[row].locY+"', '"+$gameObjects[row].hp+"', '"+$gameObjects[row].ammo+"', '"+$gameObjects[row].score+"', '"+$gameObjects[row].ticksremaining+"', '"+$gameObjects[row].objectOwner+"', '"+$gameObjects[row].updateLocation+"', '"+$gameObjects[row].objectType+"';").then(([$PagesResults, metadata]) => {
-				console.log("gameSave Insert results: "+ metadata)
+				writeLog("gameSave Insert results: "+ metadata)
 			}).catch(function(err) {
-				console.log('gameSave Insert error: '+err.message); 
+				writeLog('gameSave Insert error: '+err.message); 
 			}) 
 		}else{
 			sparational.sequelize.query("UPDATE starsparLocations SET locx='"+$gameObjects[row].locX+"', locy='"+$gameObjects[row].locY+"', hp='"+$gameObjects[row].hp+"',ticksremaining='"+$gameObjects[row].ticksremaining+"' WHERE id=''"+$gameObjects[row].id+"'';").then(([$PagesResults, metadata]) => {
-				console.log("gameSave update id "+$gameObjects[row].id+" results: "+ metadata)
+				writeLog("gameSave update id "+$gameObjects[row].id+" results: "+ metadata)
 			}).catch(function(err) {
-				console.log('gameSave update error: '+err.message); 
+				writeLog('gameSave update error: '+err.message); 
 			}) 
 		}
 	}
 };
 
 function moveObject(object) { 
+	object.updateLocation = 1
 	if (object.locx < object.ammo) { 
 		object.locx = object.locx + projectileSpeed
 	} else if (object.locx > object.ammo) { 
@@ -109,11 +110,11 @@ function gameTick() {
 			$gameObjects[object].ticksremaining = 100
 			$gameObjects[object].updatelocation = 1
 		}else if ($gameObjects[object].objectType == 'npc' || $gameObjects[object].objecttype == 'npc') { //if demon, spawn ammo.
-			addObject('ammodrop',map.name,$gameObjects[object].x,$gameObjects[object].y,1000,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,'ammodrop',0,'ammodrop');
+			addObject('ammodrop',map.name,$gameObjects[object].x,$gameObjects[object].y,1000,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,'ammodrop',1,'ammodrop');
 		}else if ($gameObjects[object].objectType == 'projectile' || $gameObjects[object].objecttype == 'projectile') { //if projectile 
 		}else if ($gameObjects[object].objectType == 'ammo' || $gameObjects[object].objecttype == 'ammo') { //if ammo 
 		}else if ($gameObjects[object].objectType == 'block' || $gameObjects[object].objecttype == 'block') { //if block, spawn ammo.
-			addObject('ammodrop',map.name,$gameObjects[object].x,$gameObjects[object].y,1000,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,'ammodrop',0,'ammodrop');
+			addObject('ammodrop',map.name,$gameObjects[object].x,$gameObjects[object].y,1000,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,'ammodrop',1,'ammodrop');
 		}else { //everyone else
 		}	
 	}
@@ -138,10 +139,10 @@ function gameTick() {
 
 	//Add random block and demon.
 	if (Math.floor(Math.random() *1000) > 990) {
-		addObject('block',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,0,0,100,'block',0,'block');
+		addObject('block',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,0,0,100,'block',1,'block');
 	}
 	if (Math.floor(Math.random() *1000) > 990) {
-		addObject('demon',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),1,'demon',0,'npc');
+		addObject('demon',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),1,'demon',1,'npc');
 	}
 };
 //}
@@ -210,7 +211,7 @@ if (request.method == "GET") {
 
 	if (player.mouseClicked == true && $clickCheck == false){
 		$clickCheck = true
-		addObject('projectile',map.name,player.x,player.y,100,player.mouseX,player.mouseY,100,$user,0,'projectile');
+		addObject('projectile',map.name,player.x,player.y,100,player.mouseX,player.mouseY,100,$user,1,'projectile');
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
 	}
