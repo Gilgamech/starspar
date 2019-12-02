@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 238
+$gameData.ver = 239
 
 //{ Init vars
 var $http = require("http");
@@ -51,8 +51,7 @@ function writeLog($msg) {
 	}
 	sparational.sequelize.query("INSERT INTO Logs (servicename, err) SELECT '"+$serviceName+"','"+$msg+"'").then(([$PagesResults, metadata]) => {
 	}).catch(function(err) {
-		console.log('writeLog Insert error: '); 
-		console.log(err); 
+		console.log('writeLog Insert error: '+err.message); 
 	}) //	.then()
 };
 
@@ -69,6 +68,21 @@ function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,obj
 };
 
 function gameSave() { 
+	for(row = 0;row > $gameObjects.filter(o => {return o.updateLocation == 1});row++) {
+		if (typeof $gameObjects[row].id == "undefined"){
+			sparational.sequelize.query("INSERT INTO starsparLocations (objectName, mapName, locX, locY, hp, ammo, score, ticksremaining,objectOwner,updateLocation,objectType) SELECT '"+$gameObjects[row].objectName+"', '"+$gameObjects[row].mapName+"', '"+$gameObjects[row].locX+"', '"+$gameObjects[row].locY+"', '"+$gameObjects[row].hp+"', '"+$gameObjects[row].ammo+"', '"+$gameObjects[row].score+"', '"+$gameObjects[row].ticksremaining+"', '"+$gameObjects[row].objectOwner+"', '"+$gameObjects[row].updateLocation+"', '"+$gameObjects[row].objectType+"';").then(([$PagesResults, metadata]) => {
+				console.log("gameSave Insert results: "+ metadata)
+			}).catch(function(err) {
+				console.log('gameSave Insert error: '+err.message); 
+			}) 
+		}else{
+			sparational.sequelize.query("UPDATE starsparLocations SET locx='"+$gameObjects[row].locX+"', locy='"+$gameObjects[row].locY+"', hp='"+$gameObjects[row].hp+"',ticksremaining='"+$gameObjects[row].ticksremaining+"' WHERE id=''"+$gameObjects[row].id+"'';").then(([$PagesResults, metadata]) => {
+				console.log("gameSave update id "+$gameObjects[row].id+" results: "+ metadata)
+			}).catch(function(err) {
+				console.log('gameSave update error: '+err.message); 
+			}) 
+		}
+	}
 };
 
 function moveObject(object) { 
