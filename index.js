@@ -87,6 +87,8 @@ function moveObject(object) {
 function gameTick() {
 	//Loop through game objects
 	for (object in $gameObjects.filter(o => {return o.hp <= 0})) {
+		if ($gameObjects[object].objecttype == 'player') { //if player, respawn. 
+		}	
 	}
 	
 	$gameObjects = $gameObjects.filter(o => {return o.hp > 0})
