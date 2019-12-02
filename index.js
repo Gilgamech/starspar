@@ -106,24 +106,6 @@ function gameTick() {
 	
 	$gameObjects = $gameObjects.filter(o => {return o.hp > 0})
 	for (object in $gameObjects) {
-		if (player.x <= (demon.x + 32)
-		&& demon.x <= (player.x + 32)
-		&& player.y <= (demon.y + 32)
-		&& demon.y <= (player.y + 32)) {
-			if ($gameObjects[object].objectType == 'player') { //if player 
-				// If collision with other player
-			}else if ($gameObjects[object].objectType == 'npc') { //if demon 
-				// If collision with demon
-			}else if ($gameObjects[object].objectType == 'projectile') { //if projectile 
-				$gameObjects[object].hp--
-				//score = score+1 where objectname = var_r.objectowner
-			}else if ($gameObjects[object].objectType == 'ammodrop') { //if projectile 
-				// If player collision with ammo
-				$gameObjects[object].ammo += 25
-			}else if ($gameObjects[object].objectType == 'block') { //if block
-			}else { //everyone else
-			}	
-		} else {
 			if ($gameObjects[object].objectType == 'player') { //if player 
 			}else if ($gameObjects[object].objectType == 'npc') { //if demon 
 				moveObject($gameObjects[object])
