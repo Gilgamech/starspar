@@ -138,8 +138,6 @@ if (request.method == "GET") {
 	}
 
 	if($gameObjects.filter(o => {return o.objectname == player.objectname}).length <=0){
-		console.log("Add Player")
-		addObject($user,mapName,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,100,0,100,$user,1,'player')
 	}
 	
 	var $returnGameObjects
