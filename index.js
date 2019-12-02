@@ -80,15 +80,15 @@ function gameSave() {
 };
 
 function moveObject(object) { 
-	if (object.x > object.ammo) { 
-		object.x = object.x + projectileSpeed
-	} else if (object.x < object.ammo) { 
-		object.x = object.x - projectileSpeed
+	if (object.locx > object.ammo) { 
+		object.locx = object.locx + projectileSpeed
+	} else if (object.locx < object.ammo) { 
+		object.locx = object.locx - projectileSpeed
 	} 
-	if (object.y > object.score) { 
-		object.y = object.y + projectileSpeed
-	} else if (object.y < object.score) { 
-		object.y = object.y - projectileSpeed
+	if (object.locy > object.score) { 
+		object.locy = object.locy + projectileSpeed
+	} else if (object.locy < object.score) { 
+		object.locy = object.locy - projectileSpeed
 	} 
 };
 
@@ -145,14 +145,14 @@ if (request.method == "GET") {
 
 			//Update player location, if it's not too far away.
 		var object = $gameObjects.filter(o => {return o.objectname == $user})[0]
-		if (player.x <= (object.x + 32)
-		&& object.x <= (player.x + 32)
-		&& player.y <= (object.y + 32)
-		&& object.y <= (player.y + 32)) {
-			object.x = player.x;
-			object.y = player.y;
+		if (player.x <= (object.locx + 32)
+		&& object.locx <= (player.x + 32)
+		&& player.y <= (object.locy + 32)
+		&& object.locy <= (player.y + 32)) {
+			object.locx = player.x;
+			object.locy = player.y;
 		} else {
-			console.log("Player at x:"+player.x+" y:"+player.y+" but server has x:"+JSON.stringify(object)+" y:"+object.y)
+			console.log("Player at x:"+player.x+" y:"+player.y+" but server has x:"+object.locx+" y:"+object.locy)
 		}
 
 	if (player.mouseClicked == true && $clickCheck == false){
