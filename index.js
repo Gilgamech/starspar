@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 194
+$gameData.ver = 195
 
 //{ Init vars
 var $http = require("http");
@@ -56,6 +56,24 @@ function writeLog($msg) {
 };
 
 function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,objectOwner,updateLocation,objectType) {
+	//Spawn the object
+	$gameObjects[$gameObjects.length].objectName = objectName
+	$gameObjects[$gameObjects.length].mapName = mapName
+	$gameObjects[$gameObjects.length].locX = locX
+	$gameObjects[$gameObjects.length].locY = locY
+	$gameObjects[$gameObjects.length].hp = hp
+	$gameObjects[$gameObjects.length].ammo = ammo
+	$gameObjects[$gameObjects.length].score = score
+	$gameObjects[$gameObjects.length].ticksremaining = ticksremaining
+	$gameObjects[$gameObjects.length].objectOwner = objectOwner
+	$gameObjects[$gameObjects.length].updateLocation = updateLocation
+	$gameObjects[$gameObjects.length].objectType = objectType
+	
+	//If projectile, remove ammo from the owner.
+	if (objectType = 'projectile') {
+		$gameObjects[objectOwner].ammo--
+	}
+
 };
 
 function gameSave() { 
@@ -120,19 +138,21 @@ if (request.method == "GET") {
 		$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'npc'}))
 	} else {//if player.x and player.y are known
 	
-	if (player.x <= 0){player.x = 0}
-	if (player.y <= 0){player.y = 0}
-	if (player.x >= map.x){player.x = map.x}
-	if (player.y >= map.y){player.y = map.y}
+		if (player.x <= 0){player.x = 0}
+		if (player.y <= 0){player.y = 0}
+		if (player.x >= map.x){player.x = map.x}
+		if (player.y >= map.y){player.y = map.y}
 
-		//Update player location, if it's not too far away.
-	for (object in $gameObjects.filter(o => {return o.objectname == $user})) {
+			//Update player location, if it's not too far away.
+		var object = $gameObjects.filter(o => {return o.objectname == $user})
 		if (player.x <= (object.x + 32)
 		&& object.x <= (player.x + 32)
 		&& player.y <= (object.y + 32)
 		&& object.y <= (player.y + 32)) {
 			object.x = player.x;
 			object.y = player.y;
+		} else {
+			console.log("Player at x:"+player.x+" y:"+player.y+" but server has x:"+object.x+" y:"+object.y)
 		}
 	}
 
