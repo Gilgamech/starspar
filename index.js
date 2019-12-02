@@ -144,7 +144,7 @@ if (request.method == "GET") {
 //}
 
 //{ Run Once
-writeLog($serviceName + ' version '+$ver+' is running on port ' + $servicePort);
-console.log($serviceName + ' version '+$ver+' is running on port ' + $servicePort);
+writeLog($serviceName + ' version '+$gameData.ver+' is running on port ' + $servicePort);
+console.log($serviceName + ' version '+$gameData.ver+' is running on port ' + $servicePort);
 //}
 
