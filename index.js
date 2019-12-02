@@ -68,7 +68,7 @@ if (request.method == "GET") {
 	var player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
 
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
-		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"';").then(([$locResults, metadata]) => {
+        sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"';").then(([$gameObjects, metadata]) => {
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
 			response.end($keyCallback+":gameObjects:"+JSON.stringify($gameObjects)+":gameData:"+JSON.stringify($gameData))
         }).catch(function(err) {
@@ -144,7 +144,7 @@ if (request.method == "GET") {
 //}
 
 //{ Run Once
-writeLog('Service is running on port ' + $servicePort);
-console.log($serviceName + ' is running on port ' + $servicePort);
+writeLog($serviceName + ' version '+$ver+' is running on port ' + $servicePort);
+console.log($serviceName + ' version '+$ver+' is running on port ' + $servicePort);
 //}
 
