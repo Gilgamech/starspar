@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 205
+$gameData.ver = 206
 
 //{ Init vars
 var $http = require("http");
@@ -86,6 +86,26 @@ function moveObject(object) {
 };
 
 function gameTick() {
+	//Loop through game objects
+	for (object in $gameObjects.filter(o => {return o.hp <= 0})) {
+		if ($gameObjects[thisGameObj].objecttype == 'player') { //if player, respawn. 
+			object.locx = Math.round(32 + (Math.random() * (map.x - 64)),4)
+			object.locy = Math.round(32 + (Math.random() * (map.x - 64)),4)
+			object.hp = 100
+			object.score = 0
+			object.ticksremaining = 100
+			object.updatelocation = 1
+		}else if ($gameObjects[thisGameObj].objecttype == 'npc') { //if demon, spawn ammo.
+			addObject('ammodrop',map.name,$gameObjects[thisGameObj].x,$gameObjects[thisGameObj].y,1000,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,'ammodrop',0,'ammodrop');
+		}else if ($gameObjects[thisGameObj].objecttype == 'projectile') { //if projectile 
+		}else if ($gameObjects[thisGameObj].objecttype == 'ammodrop') { //if ammo 
+		}else if ($gameObjects[thisGameObj].objecttype == 'block') { //if block, spawn ammo.
+			addObject('ammodrop',map.name,$gameObjects[thisGameObj].x,$gameObjects[thisGameObj].y,1000,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,'ammodrop',0,'ammodrop');
+		}else { //everyone else
+		}	
+	}
+	
+	$gameObjects = $gameObjects.filter(o => {return o.hp > 0})
 	//Add random block and demon.
 	if (Math.floor(Math.random() *100) > 90) {
 		addObject('block',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,0,0,100,'block',0,'block');
@@ -161,6 +181,8 @@ if (request.method == "GET") {
 		addObject('projectile',map.name,player.x,player.y,100,player.mouseX,player.mouseY,100,$user,0,'projectile');
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
+	} else {
+		console.log("Player mouseClicked:"+player.mouseClicked+" clickCheck:"+$clickCheck)
 	}
 	$returnGameObjects = $gameObjects.filter(o => {return o.locx > player.x-2000}).filter(o => {return o.locx < player.x+2000}).filter(o => {return o.locy > player.y-2000}).filter(o => {return o.locy < player.y+2000})
 	$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'player'}))
