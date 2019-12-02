@@ -116,7 +116,6 @@ function gameTick() {
 			}else if ($gameObjects[object].objectType == 'block') { //if block
 			}else { //everyone else
 			}	
-		} // end if object
 	} // end for object
 
 	//Add random block and demon.
