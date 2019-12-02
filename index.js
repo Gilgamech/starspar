@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 211
+$gameData.ver = 212
 
 //{ Init vars
 var $http = require("http");
@@ -72,14 +72,14 @@ function gameSave() {
 };
 
 function moveObject(object) { 
-	if (object.locx > object.ammo) { 
+	if (object.locx < object.ammo) { 
 		object.locx = object.locx + projectileSpeed
-	} else if (object.locx < object.ammo) { 
+	} else if (object.locx > object.ammo) { 
 		object.locx = object.locx - projectileSpeed
 	} 
-	if (object.locy > object.score) { 
+	if (object.locy < object.score) { 
 		object.locy = object.locy + projectileSpeed
-	} else if (object.locy < object.score) { 
+	} else if (object.locy > object.score) { 
 		object.locy = object.locy - projectileSpeed
 	} 
 };
