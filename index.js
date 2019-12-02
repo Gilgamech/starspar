@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 241
+$gameData.ver = 242
 
 //{ Init vars
 var $http = require("http");
@@ -171,15 +171,15 @@ if (request.method == "GET") {
 	//game tick and save
 	var now = Date.now();
 	var delta = now - then;
-	$gameTick += delta;
-	if ($gameTick > $tickDelay) {
-		$gameTick -= $tickDelay;
-        gameTick();
-	}
 	$gameSave += delta;
 	if ($gameSave > $saveDelay) {
 		$gameSave -= $saveDelay;
 		gameSave();
+	}
+	$gameTick += delta;
+	if ($gameTick > $tickDelay) {
+		$gameTick -= $tickDelay;
+        gameTick();
 	}
 
 	if($gameObjects.filter(o => {return o.objectname == player.objectname}).length <=0){
