@@ -72,8 +72,8 @@ if (request.method == "GET") {
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
 			response.end($keyCallback+":gameObjects:"+JSON.stringify($gameObjects)+":gameData:"+JSON.stringify($gameData))
         }).catch(function(err) {
-            writeLog("Invalid locResults attempt - SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"' - " + err.message)
-            console.log("Invalid locResults attempt.") 
+            writeLog("Invalid gameObjects attempt - SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"' - " + err.message)
+            console.log("Invalid gameObjects attempt.") 
         })
     } else {//if player.x and player.y are known
 	if (player.x <= 0){player.x = 0}
@@ -105,8 +105,8 @@ if (request.method == "GET") {
 	}	
 
 	// Store player location, send back all object locations and player scores for the player's map.
-		sparational.starspar.query("SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0);").then(([$PagesResults, metadata]) => {
-			$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
+		sparational.starspar.query("SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0);").then(([$gameObjects, metadata]) => {
+			$demonResults = $gameObjects.filter(o => {return o.objectname=="demon"})[0]
 			demon.x = $demonResults.locx
 			demon.y = $demonResults.locy
 			
@@ -120,7 +120,7 @@ if (request.method == "GET") {
 			};//end collision calculations
 			
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
-			response.end($keyCallback+":gameObjects:"+JSON.stringify($PagesResults)+":gameData:"+JSON.stringify($gameData))
+			response.end($keyCallback+":gameObjects:"+JSON.stringify($gameObjects)+":gameData:"+JSON.stringify($gameData))
 		}).catch(function(err) {
 			writeLog("Invalid updatePlayer2 attempt - SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0); - " + err.message)
 		})//end Pages query
