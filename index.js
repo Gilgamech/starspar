@@ -1,5 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
+var $gameData = {};
+$gameData.ver = 186
 
 //{ Init vars
 var $http = require("http");
@@ -68,12 +70,12 @@ if (request.method == "GET") {
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
 		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"';").then(([$locResults, metadata]) => {
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
-			response.end($keyCallback+":scores:"+JSON.stringify($locResults))
-		}).catch(function(err) {
-			writeLog("Invalid locResults attempt - SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"' - " + err.message)
-			console.log("Invalid locResults attempt.") 
-		})
-	} else {//if player.x and player.y are known
+			response.end($keyCallback+":gameObjects:"+JSON.stringify($gameObjects)+":gameData:"+JSON.stringify($gameData))
+        }).catch(function(err) {
+            writeLog("Invalid locResults attempt - SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"' - " + err.message)
+            console.log("Invalid locResults attempt.") 
+        })
+    } else {//if player.x and player.y are known
 	if (player.x <= 0){player.x = 0}
 	if (player.y <= 0){player.y = 0}
 	if (player.x >= map.x){player.x = map.x}
@@ -118,7 +120,7 @@ if (request.method == "GET") {
 			};//end collision calculations
 			
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
-			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
+			response.end($keyCallback+":gameObjects:"+JSON.stringify($PagesResults)+":gameData:"+JSON.stringify($gameData))
 		}).catch(function(err) {
 			writeLog("Invalid updatePlayer2 attempt - SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0); - " + err.message)
 		})//end Pages query
