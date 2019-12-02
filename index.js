@@ -30,6 +30,13 @@ var $clickCheck = false;
 
 //load $gameObjects var.
 var $gameObjects;
+sparational.starspar.query("SELECT * FROM starspar$gameObjects;").then(([$locResults, metadata]) => {
+	$gameObjects = $locResults;
+	console.log($gameObjects)
+}).catch(function(err) {
+	writeLog("Invalid locResults attempt - SELECT * FROM starspar$gameObjects - " + err.message)
+	console.log("Invalid locResults attempt.") 
+})
 //}
 
 //{ functions
