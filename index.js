@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 202
+$gameData.ver = 204
 
 //{ Init vars
 var $http = require("http");
@@ -131,7 +131,7 @@ if (request.method == "GET") {
 		gameSave();
 	}
 
-	if($r.filter(o => {return o.objectname == player.objectname}).length <0){
+	if($gameObjects.filter(o => {return o.objectname == player.objectname}).length <=0){
 		addObject($user,mapName,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,100,0,100,$user,1,'player')
 	}
 	
