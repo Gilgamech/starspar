@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 199
+$gameData.ver = 200
 
 //{ Init vars
 var $http = require("http");
@@ -58,7 +58,7 @@ function writeLog($msg) {
 function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,objectOwner,updateLocation,objectType) {
 	console.log("addObject:"+objectName+","+mapName+","+locX+","+locY+","+hp+","+ammo+","+score+","+ticksremaining+","+objectOwner+","+updateLocation+","+objectType)
 	//Spawn the object
-	$r.push({'objectname':'test','mapname':'noob','locx':2000,'locy':4000,'hp':100,'ammo':8000,'score':7000,'ticksremaining':-1,'objectOwner':'test','updateLocation':0,'objectType':'test'})
+	$r.push({'objectname':objectName,'mapname':mapName,'locx':locX,'locy':locY,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectOwner':objectOwner,'updateLocation':updateLocation,'objectType':objectType})
 	
 	//If projectile, remove am	mo from the owner.
 	if (objectType = 'projectile') {
@@ -152,6 +152,7 @@ if (request.method == "GET") {
 			object.locy = player.y;
 		} else {
 			console.log("Player at x:"+player.x+" y:"+player.y+" but server has x:"+object.locx+" y:"+object.locy)
+			object.updateLocation = 1
 		}
 
 	if (player.mouseClicked == true && $clickCheck == false){
