@@ -85,6 +85,9 @@ function moveObject(object) {
 };
 
 function gameTick() {
+	//Loop through game objects
+	for (object in $gameObjects.filter(o => {return o.hp <= 0})) {
+	}
 	
 	$gameObjects = $gameObjects.filter(o => {return o.hp > 0})
 	//Add random block and demon.
