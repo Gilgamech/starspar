@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 186
+$gameData.ver = 188
 
 //{ Init vars
 var $http = require("http");
@@ -30,11 +30,10 @@ var $clickCheck = false;
 
 //load $gameObjects var.
 var $gameObjects;
-sparational.starspar.query("SELECT * FROM starspar$gameObjects;").then(([$locResults, metadata]) => {
-	$gameObjects = $locResults;
-	console.log($gameObjects)
+sparational.starspar.query("SELECT * FROM starsparLocations;").then(([$locResults, metadata]) => {
+	console.log($locResults)
 }).catch(function(err) {
-	writeLog("Invalid locResults attempt - SELECT * FROM starspar$gameObjects - " + err.message)
+	writeLog("Invalid locResults attempt - SELECT * FROM starsparLocations - " + err.message)
 	console.log("Invalid locResults attempt.") 
 })
 //}
