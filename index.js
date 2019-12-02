@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 200
+$gameData.ver = 201
 
 //{ Init vars
 var $http = require("http");
@@ -18,6 +18,7 @@ var map = {};
 map.x = 10000
 map.y = 10000
 map.name = 'noob'
+map.playerMoveSpeed = 320
 
 projectileSpeed = 3;
 
@@ -56,7 +57,6 @@ function writeLog($msg) {
 };
 
 function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,objectOwner,updateLocation,objectType) {
-	console.log("addObject:"+objectName+","+mapName+","+locX+","+locY+","+hp+","+ammo+","+score+","+ticksremaining+","+objectOwner+","+updateLocation+","+objectType)
 	//Spawn the object
 	$r.push({'objectname':objectName,'mapname':mapName,'locx':locX,'locy':locY,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectOwner':objectOwner,'updateLocation':updateLocation,'objectType':objectType})
 	
@@ -144,10 +144,10 @@ if (request.method == "GET") {
 
 			//Update player location, if it's not too far away.
 		var object = $gameObjects.filter(o => {return o.objectname == $user})[0]
-		if (player.x <= (object.locx + 32)
-		&& object.locx <= (player.x + 32)
-		&& player.y <= (object.locy + 32)
-		&& object.locy <= (player.y + 32)) {
+		if (player.x <= (object.locx + map.playerMoveSpeed)
+		&& object.locx <= (player.x + map.playerMoveSpeed)
+		&& player.y <= (object.locy + map.playerMoveSpeed)
+		&& object.locy <= (player.y + map.playerMoveSpeed)) {
 			object.locx = player.x;
 			object.locy = player.y;
 		} else {
