@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 196
+$gameData.ver = 197
 
 //{ Init vars
 var $http = require("http");
@@ -144,7 +144,7 @@ if (request.method == "GET") {
 		if (player.y >= map.y){player.y = map.y}
 
 			//Update player location, if it's not too far away.
-		var object = $gameObjects.filter(o => {return o.objectname == $user})
+		var object = $gameObjects.filter(o => {return o.objectname == $user})[0]
 		if (player.x <= (object.x + 32)
 		&& object.x <= (player.x + 32)
 		&& player.y <= (object.y + 32)
