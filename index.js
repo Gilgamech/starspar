@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 207
+$gameData.ver = 208
 
 //{ Init vars
 var $http = require("http");
@@ -85,6 +85,18 @@ function moveObject(object) {
 };
 
 function gameTick() {
+	//Loop through game objects
+	for (object in $gameObjects.filter(o => {return o.hp <= 0})) {
+		if ($gameObjects[thisGameObj].objecttype == 'player') { //if player, respawn. 
+		}else if ($gameObjects[thisGameObj].objecttype == 'npc') { //if demon, spawn ammo.
+			addObject('ammodrop',map.name,$gameObjects[thisGameObj].x,$gameObjects[thisGameObj].y,1000,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,'ammodrop',0,'ammodrop');
+		}else if ($gameObjects[thisGameObj].objecttype == 'projectile') { //if projectile 
+		}else if ($gameObjects[thisGameObj].objecttype == 'ammodrop') { //if ammo 
+		}else if ($gameObjects[thisGameObj].objecttype == 'block') { //if block, spawn ammo.
+			addObject('ammodrop',map.name,$gameObjects[thisGameObj].x,$gameObjects[thisGameObj].y,1000,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,'ammodrop',0,'ammodrop');
+		}else { //everyone else
+		}	
+	}
 	
 	$gameObjects = $gameObjects.filter(o => {return o.hp > 0})
 	//Add random block and demon.
