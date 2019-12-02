@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 210
+$gameData.ver = 211
 
 //{ Init vars
 var $http = require("http");
@@ -105,12 +105,44 @@ function gameTick() {
 	}
 	
 	$gameObjects = $gameObjects.filter(o => {return o.hp > 0})
+	for (object in $gameObjects) {
+		if (player.x <= (demon.x + 32)
+		&& demon.x <= (player.x + 32)
+		&& player.y <= (demon.y + 32)
+		&& demon.y <= (player.y + 32)) {
+			if ($gameObjects[object].objectType == 'player') { //if player 
+				// If collision with other player
+			}else if ($gameObjects[object].objectType == 'npc') { //if demon 
+				// If collision with demon
+			}else if ($gameObjects[object].objectType == 'projectile') { //if projectile 
+				$gameObjects[object].hp--
+				//score = score+1 where objectname = var_r.objectowner
+			}else if ($gameObjects[object].objectType == 'ammodrop') { //if projectile 
+				// If player collision with ammo
+				$gameObjects[object].ammo += 25
+			}else if ($gameObjects[object].objectType == 'block') { //if block
+			}else { //everyone else
+			}	
+		} else {
+			if ($gameObjects[object].objectType == 'player') { //if player 
+			}else if ($gameObjects[object].objectType == 'npc') { //if demon 
+				moveObject($gameObjects[object])
+			}else if ($gameObjects[object].objectType == 'projectile') { //if prjectile 
+				moveObject($gameObjects[object])
+			}else if ($gameObjects[object].objectType == 'ammodrop') { //if projectile 
+				moveObject($gameObjects[object])
+			}else if ($gameObjects[object].objectType == 'block') { //if block
+			}else { //everyone else
+			}	
+		} // end if object
+	} // end for object
+
 	//Add random block and demon.
 	if (Math.floor(Math.random() *1000) > 990) {
 		addObject('block',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,0,0,100,'block',0,'block');
 	}
 	if (Math.floor(Math.random() *1000) > 990) {
-		addObject('demon',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,0,0,1,'demon',0,'demon');
+		addObject('demon',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,0,0,1,'demon',0,'npc');
 	}
 };
 //}
