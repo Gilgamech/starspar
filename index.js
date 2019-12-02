@@ -57,7 +57,7 @@ function writeLog($msg) {
 
 function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,objectOwner,updateLocation,objectType) {
 	//Spawn the object
-	$gameObjects.push({'objectname':objectName,'mapname':mapName,'locx':locX,'locy':locY,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectOwner':objectOwner,'updateLocation':updateLocation,'objectType':objectType})
+	$gameObjects.push({'objectname':objectName,'mapname':mapName,'locx':locX,'locy':locY,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectOwner':objectOwner,'updateLocation':1,'objectType':objectType})
 	
 	//If projectile, remove am	mo from the owner.
 	if (objectType = 'projectile') {
@@ -68,17 +68,19 @@ function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,obj
 };
 
 function gameSave() { 
-	for(row = 0;row > $gameObjects.filter(o => {return o.updateLocation == 1});row++) {
+	$saveObjects = $gameObjects.filter(o => {return o.updateLocation == 1}
+	console.log("gameSave count "+$saveObjects.length)
+	for(row = 0;row > $saveObjects.length);row++) {
 	//for(row = 0;row > $gameObjects.filter(o => {return o.objectType == 'player'});row++) {
 	console.log("gameSave row "+row)
-		if (typeof $gameObjects[row].id != "undefined"){
-			sparational.sequelize.query("UPDATE starsparLocations SET locx='"+$gameObjects[row].locX+"', locy='"+$gameObjects[row].locY+"', hp='"+$gameObjects[row].hp+"',ticksremaining='"+$gameObjects[row].ticksremaining+"',updateLocation=0 WHERE id=''"+$gameObjects[row].id+"'';").then(([$PagesResults, metadata]) => {
-				writeLog("gameSave update id "+$gameObjects[row].id+" results: "+ metadata)
+		if (typeof $saveObjects[row].id != "undefined"){
+			sparational.sequelize.query("UPDATE starsparLocations SET locx='"+$saveObjects[row].locX+"', locy='"+$saveObjects[row].locY+"', hp='"+$saveObjects[row].hp+"',ticksremaining='"+$saveObjects[row].ticksremaining+"',updateLocation=0 WHERE id=''"+$saveObjects[row].id+"'';").then(([$PagesResults, metadata]) => {
+				writeLog("gameSave update id "+$saveObjects[row].id+" results: "+ metadata)
 			}).catch(function(err) {
 				writeLog('gameSave update error: '+err.message); 
 			}) 
 		}else{
-			sparational.sequelize.query("INSERT INTO starsparLocations (objectName, mapName, locX, locY, hp, ammo, score, ticksremaining,objectOwner,updateLocation,objectType) SELECT '"+$gameObjects[row].objectName+"', '"+$gameObjects[row].mapName+"', '"+$gameObjects[row].locX+"', '"+$gameObjects[row].locY+"', '"+$gameObjects[row].hp+"', '"+$gameObjects[row].ammo+"', '"+$gameObjects[row].score+"', '"+$gameObjects[row].ticksremaining+"', '"+$gameObjects[row].objectOwner+"', 0, '"+$gameObjects[row].objectType+"';").then(([$PagesResults, metadata]) => {
+			sparational.sequelize.query("INSERT INTO starsparLocations (objectName, mapName, locX, locY, hp, ammo, score, ticksremaining,objectOwner,updateLocation,objectType) SELECT '"+$saveObjects[row].objectName+"', '"+$saveObjects[row].mapName+"', '"+$saveObjects[row].locX+"', '"+$saveObjects[row].locY+"', '"+$saveObjects[row].hp+"', '"+$saveObjects[row].ammo+"', '"+$saveObjects[row].score+"', '"+$saveObjects[row].ticksremaining+"', '"+$saveObjects[row].objectOwner+"', 0, '"+$saveObjects[row].objectType+"';").then(([$PagesResults, metadata]) => {
 				writeLog("gameSave Insert results: "+ metadata)
 			}).catch(function(err) {
 				writeLog('gameSave Insert error: '+err.message); 
