@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 212
+$gameData.ver = 235
 
 //{ Init vars
 var $http = require("http");
@@ -107,11 +107,14 @@ function gameTick() {
 	$gameObjects = $gameObjects.filter(o => {return o.hp > 0})
 	for (object in $gameObjects) {
 			if ($gameObjects[object].objectType == 'player') { //if player 
+				$gameObjects[object].ticksremaining--
 			}else if ($gameObjects[object].objectType == 'npc') { //if demon 
 				moveObject($gameObjects[object])
-			}else if ($gameObjects[object].objectType == 'projectile') { //if prjectile 
+			}else if ($gameObjects[object].objectType == 'projectile') { //if prjectile
+				$gameObjects[object].hp--
 				moveObject($gameObjects[object])
 			}else if ($gameObjects[object].objectType == 'ammodrop') { //if projectile 
+				$gameObjects[object].hp--
 				moveObject($gameObjects[object])
 			}else if ($gameObjects[object].objectType == 'block') { //if block
 			}else { //everyone else
