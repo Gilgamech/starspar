@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 193
+$gameData.ver = 194
 
 //{ Init vars
 var $http = require("http");
@@ -124,6 +124,17 @@ if (request.method == "GET") {
 	if (player.y <= 0){player.y = 0}
 	if (player.x >= map.x){player.x = map.x}
 	if (player.y >= map.y){player.y = map.y}
+
+		//Update player location, if it's not too far away.
+	for (object in $gameObjects.filter(o => {return o.objectname == $user})) {
+		if (player.x <= (object.x + 32)
+		&& object.x <= (player.x + 32)
+		&& player.y <= (object.y + 32)
+		&& object.y <= (player.y + 32)) {
+			object.x = player.x;
+			object.y = player.y;
+		}
+	}
 
 	if (player.mouseClicked == true && $clickCheck == false){
 		$clickCheck = true
