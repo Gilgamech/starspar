@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 197
+$gameData.ver = 198
 
 //{ Init vars
 var $http = require("http");
@@ -93,6 +93,13 @@ function moveObject(object) {
 };
 
 function gameTick() {
+	//Add random block and demon.
+	if (Math.floor(Math.random() *100) > 90) {
+		addObject('block',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,0,0,100,'block',0,'block');
+	}
+	if (Math.floor(Math.random() *100) > 90) {
+		addObject('demon',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,0,0,1,'demon',0,'demon');
+	}
 };
 //}
 
