@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 242
+$gameData.ver = 243
 
 //{ Init vars
 var $http = require("http");
@@ -68,6 +68,7 @@ function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,obj
 };
 
 function gameSave() { 
+		console.log("gameSave")
 	for(row = 0;row > $gameObjects.filter(o => {return o.objectType == 'player'});row++) {
 		if (typeof $gameObjects[row].id == "undefined"){
 			sparational.sequelize.query("INSERT INTO starsparLocations (objectName, mapName, locX, locY, hp, ammo, score, ticksremaining,objectOwner,updateLocation,objectType) SELECT '"+$gameObjects[row].objectName+"', '"+$gameObjects[row].mapName+"', '"+$gameObjects[row].locX+"', '"+$gameObjects[row].locY+"', '"+$gameObjects[row].hp+"', '"+$gameObjects[row].ammo+"', '"+$gameObjects[row].score+"', '"+$gameObjects[row].ticksremaining+"', '"+$gameObjects[row].objectOwner+"', 0, '"+$gameObjects[row].objectType+"';").then(([$PagesResults, metadata]) => {
@@ -174,6 +175,7 @@ if (request.method == "GET") {
 	$gameSave += delta;
 	if ($gameSave > $saveDelay) {
 		$gameSave -= $saveDelay;
+		console.log("Game Save")
 		gameSave();
 	}
 	$gameTick += delta;
