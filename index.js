@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 243
+$gameData.ver = 244
 
 //{ Init vars
 var $http = require("http");
@@ -68,19 +68,20 @@ function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,obj
 };
 
 function gameSave() { 
-		console.log("gameSave")
-	for(row = 0;row > $gameObjects.filter(o => {return o.objectType == 'player'});row++) {
-		if (typeof $gameObjects[row].id == "undefined"){
-			sparational.sequelize.query("INSERT INTO starsparLocations (objectName, mapName, locX, locY, hp, ammo, score, ticksremaining,objectOwner,updateLocation,objectType) SELECT '"+$gameObjects[row].objectName+"', '"+$gameObjects[row].mapName+"', '"+$gameObjects[row].locX+"', '"+$gameObjects[row].locY+"', '"+$gameObjects[row].hp+"', '"+$gameObjects[row].ammo+"', '"+$gameObjects[row].score+"', '"+$gameObjects[row].ticksremaining+"', '"+$gameObjects[row].objectOwner+"', 0, '"+$gameObjects[row].objectType+"';").then(([$PagesResults, metadata]) => {
-				writeLog("gameSave Insert results: "+ metadata)
-			}).catch(function(err) {
-				writeLog('gameSave Insert error: '+err.message); 
-			}) 
-		}else{
+	for(row = 0;row > $gameObjects.filter(o => {return o.updateLocation == 1});row++) {
+	//for(row = 0;row > $gameObjects.filter(o => {return o.objectType == 'player'});row++) {
+	console.log("gameSave row "+row)
+		if (typeof $gameObjects[row].id != "undefined"){
 			sparational.sequelize.query("UPDATE starsparLocations SET locx='"+$gameObjects[row].locX+"', locy='"+$gameObjects[row].locY+"', hp='"+$gameObjects[row].hp+"',ticksremaining='"+$gameObjects[row].ticksremaining+"',updateLocation=0 WHERE id=''"+$gameObjects[row].id+"'';").then(([$PagesResults, metadata]) => {
 				writeLog("gameSave update id "+$gameObjects[row].id+" results: "+ metadata)
 			}).catch(function(err) {
 				writeLog('gameSave update error: '+err.message); 
+			}) 
+		}else{
+			sparational.sequelize.query("INSERT INTO starsparLocations (objectName, mapName, locX, locY, hp, ammo, score, ticksremaining,objectOwner,updateLocation,objectType) SELECT '"+$gameObjects[row].objectName+"', '"+$gameObjects[row].mapName+"', '"+$gameObjects[row].locX+"', '"+$gameObjects[row].locY+"', '"+$gameObjects[row].hp+"', '"+$gameObjects[row].ammo+"', '"+$gameObjects[row].score+"', '"+$gameObjects[row].ticksremaining+"', '"+$gameObjects[row].objectOwner+"', 0, '"+$gameObjects[row].objectType+"';").then(([$PagesResults, metadata]) => {
+				writeLog("gameSave Insert results: "+ metadata)
+			}).catch(function(err) {
+				writeLog('gameSave Insert error: '+err.message); 
 			}) 
 		}
 	}
@@ -174,8 +175,8 @@ if (request.method == "GET") {
 	var delta = now - then;
 	$gameSave += delta;
 	if ($gameSave > $saveDelay) {
+		console.log("Game Save "+$gameSave+" delay "+$saveDelay)
 		$gameSave -= $saveDelay;
-		console.log("Game Save")
 		gameSave();
 	}
 	$gameTick += delta;
