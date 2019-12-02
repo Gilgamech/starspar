@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 191
+$gameData.ver = 192
 
 //{ Init vars
 var $http = require("http");
@@ -89,12 +89,8 @@ if (request.method == "GET") {
             console.log("Invalid gameTick attempt.")         
         })	
 	}
+var $returnGameObjects
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
-		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"';").then(([$gameObjects, metadata]) => {
-		}).catch(function(err) {
-			writeLog("Invalid locResults attempt - SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"' - " + err.message)
-			console.log("Invalid locResults attempt.") 
-		})
 		$returnGameObjects = $gameObjects.filter(o => {return o.objecttype == 'player'})
 		$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'npc'}))
 	} else {//if player.x and player.y are known
@@ -106,10 +102,6 @@ if (request.method == "GET") {
 
 	if (player.mouseClicked == true && $clickCheck == false){
 		$clickCheck = true
-		sparational.starspar.query("SELECT insertProjectile('"+$user+"','"+map.name+"',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+");").then(([$PagesResults, metadata]) => {
-		}).catch(function(err) {
-			writeLog("Invalid insertProjectile attempt - SELECT insertProjectile('"+$user+"','"+map.name+"',"+player.x+","+player.y+","+player.mouseX+","+player.mouseY+"); - "+ err.message)
-		})//end insertProjectile query
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
 	}
