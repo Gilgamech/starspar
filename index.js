@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 205
+$gameData.ver = 206
 
 //{ Init vars
 var $http = require("http");
@@ -59,7 +59,7 @@ function writeLog($msg) {
 function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,objectOwner,updateLocation,objectType) {
 	console.log("addObject:"+objectName+","+mapName+","+locX+","+locY+","+hp+","+ammo+","+score+","+ticksremaining+","+objectOwner+","+updateLocation+","+objectType)
 	//Spawn the object
-	$r.push({'objectname':objectName,'mapname':mapName,'locx':locX,'locy':locY,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectOwner':objectOwner,'updateLocation':updateLocation,'objectType':objectType})
+	$gameObjects.push({'objectname':objectName,'mapname':mapName,'locx':locX,'locy':locY,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectOwner':objectOwner,'updateLocation':updateLocation,'objectType':objectType})
 	
 	//If projectile, remove am	mo from the owner.
 	if (objectType = 'projectile') {
@@ -163,8 +163,6 @@ if (request.method == "GET") {
 		addObject('projectile',map.name,player.x,player.y,100,player.mouseX,player.mouseY,100,$user,0,'projectile');
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
-	} else {
-		console.log("Player mouseClicked:"+player.mouseClicked+" clickCheck:"+$clickCheck)
 	}
 	$returnGameObjects = $gameObjects.filter(o => {return o.locx > player.x-2000}).filter(o => {return o.locx < player.x+2000}).filter(o => {return o.locy > player.y-2000}).filter(o => {return o.locy < player.y+2000})
 	$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'player'}))
