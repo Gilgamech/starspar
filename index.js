@@ -70,7 +70,7 @@ if (request.method == "GET") {
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
 		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"';").then(([$locResults, metadata]) => {
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
-			response.end($keyCallback+":scores:"+JSON.stringify($locResults))
+			response.end($keyCallback+":scores:"+JSON.stringify($locResults)+":gameData:"+JSON.stringify($gameData))
 		}).catch(function(err) {
 			writeLog("Invalid locResults attempt - SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"' - " + err.message)
 			console.log("Invalid locResults attempt.") 
@@ -120,7 +120,7 @@ if (request.method == "GET") {
 			};//end collision calculations
 			
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
-			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
+			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults)+":gameData:"+JSON.stringify($gameData))
 		}).catch(function(err) {
 			writeLog("Invalid updatePlayer2 attempt - SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0); - " + err.message)
 		})//end Pages query
