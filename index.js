@@ -87,18 +87,18 @@ function moveObject(object) {
 function gameTick() {
 	//Loop through game objects
 	for (object in $gameObjects.filter(o => {return o.hp <= 0})) {
-		if ($gameObjects[object].objecttype == 'player') { //if player, respawn. 
+		if ($gameObjects[object].objectType == 'player') { //if player, respawn. 
 			$gameObjects[object].locx = Math.round(32 + (Math.random() * (map.x - 64)),4)
 			$gameObjects[object].locy = Math.round(32 + (Math.random() * (map.x - 64)),4)
 			$gameObjects[object].hp = 100
 			$gameObjects[object].score = 0
 			$gameObjects[object].ticksremaining = 100
 			$gameObjects[object].updatelocation = 1
-		}else if ($gameObjects[object].objecttype == 'npc') { //if demon, spawn ammo.
+		}else if ($gameObjects[object].objectType == 'npc') { //if demon, spawn ammo.
 			addObject('ammodrop',map.name,$gameObjects[object].x,$gameObjects[object].y,1000,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,'ammodrop',0,'ammodrop');
-		}else if ($gameObjects[object].objecttype == 'projectile') { //if projectile 
-		}else if ($gameObjects[object].objecttype == 'ammodrop') { //if ammo 
-		}else if ($gameObjects[object].objecttype == 'block') { //if block, spawn ammo.
+		}else if ($gameObjects[object].objectType == 'projectile') { //if projectile 
+		}else if ($gameObjects[object].objectType == 'ammodrop') { //if ammo 
+		}else if ($gameObjects[object].objectType == 'block') { //if block, spawn ammo.
 			addObject('ammodrop',map.name,$gameObjects[object].x,$gameObjects[object].y,1000,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,'ammodrop',0,'ammodrop');
 		}else { //everyone else
 		}	
