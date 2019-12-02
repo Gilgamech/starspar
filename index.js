@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 189
+$gameData.ver = 190
 
 //{ Init vars
 var $http = require("http");
@@ -78,6 +78,18 @@ if (request.method == "GET") {
 // Receive player keystrokes
 	var player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
 
+	//game tick and save
+	var now = Date.now();
+	var delta = now - then;
+	$gameTick += delta;
+	if ($gameTick > $tickDelay) {
+		$gameTick -= $tickDelay;
+        sparational.starspar.query("SELECT gameTick();").then(([$PagesResults, metadata]) => {
+        }).catch(function(err) {
+            writeLog("Invalid gameTick attempt: " + err.message)
+            console.log("Invalid gameTick attempt.")         
+        })	
+	}
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
 		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"';").then(([$gameObjects, metadata]) => {
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
@@ -102,18 +114,6 @@ if (request.method == "GET") {
 		$clickCheck = false
 	}
 
-	//gameTick
-	var now = Date.now();
-	var delta = now - then;
-	$cumulativeTick += delta;
-	if ($cumulativeTick > $tickDelay) {
-		$cumulativeTick -= $tickDelay;
-		sparational.starspar.query("SELECT gameTick();").then(([$PagesResults, metadata]) => {
-		}).catch(function(err) {
-			writeLog("Invalid gameTick attempt: " + err.message)
-			console.log("Invalid gameTick attempt.") 		
-		})
-	}	
 
 	// Store player location, send back all object locations and player scores for the player's map.
 		sparational.starspar.query("SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0);").then(([$gameObjects, metadata]) => {
