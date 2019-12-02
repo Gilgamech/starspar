@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 192
+$gameData.ver = 193
 
 //{ Init vars
 var $http = require("http");
@@ -54,10 +54,24 @@ function writeLog($msg) {
 		console.log(err); 
 	}) //	.then()
 };
+
 function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,objectOwner,updateLocation,objectType) {
 };
 
 function gameSave() { 
+};
+
+function moveObject(object) { 
+	if (object.x > object.ammo) { 
+		object.x = object.x + projectileSpeed
+	} else if (object.x < object.ammo) { 
+		object.x = object.x - projectileSpeed
+	} 
+	if (object.y > object.score) { 
+		object.y = object.y + projectileSpeed
+	} else if (object.y < object.score) { 
+		object.y = object.y - projectileSpeed
+	} 
 };
 
 function gameTick() {
@@ -93,7 +107,14 @@ if (request.method == "GET") {
 		$gameTick -= $tickDelay;
         gameTick();
 	}
-var $returnGameObjects
+	$gameSave += delta;
+	if ($gameSave > $saveDelay) {
+		$gameSave -= $saveDelay;
+		gameSave();
+	}
+
+	
+	var $returnGameObjects
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
 		$returnGameObjects = $gameObjects.filter(o => {return o.objecttype == 'player'})
 		$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'npc'}))
