@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 190
+$gameData.ver = 191
 
 //{ Init vars
 var $http = require("http");
@@ -27,7 +27,6 @@ var $tickDelay = (1000/$ticks)
 var $saves = 10
 var $saveDelay = (1000*$saves)
 var then = Date.now();
-var $cumulativeTick = 0;
 var $gameTick = 0;
 var $gameSave = 0;
 var $clickCheck = false;
@@ -92,13 +91,14 @@ if (request.method == "GET") {
 	}
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
 		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"';").then(([$gameObjects, metadata]) => {
-            var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
-			response.end($keyCallback+":gameObjects:"+JSON.stringify($gameObjects)+":gameData:"+JSON.stringify($gameData))
 		}).catch(function(err) {
 			writeLog("Invalid locResults attempt - SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"' - " + err.message)
 			console.log("Invalid locResults attempt.") 
 		})
+		$returnGameObjects = $gameObjects.filter(o => {return o.objecttype == 'player'})
+		$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'npc'}))
 	} else {//if player.x and player.y are known
+	
 	if (player.x <= 0){player.x = 0}
 	if (player.y <= 0){player.y = 0}
 	if (player.x >= map.x){player.x = map.x}
@@ -113,30 +113,15 @@ if (request.method == "GET") {
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
 	}
+	$returnGameObjects = $gameObjects.filter(o => {return o.locx > player.x-2000}).filter(o => {return o.locx < player.x+2000}).filter(o => {return o.locy > player.y-2000}).filter(o => {return o.locy < player.y+2000})
+	$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'player'}))
+	$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'npc'}))
+	
+	} // end if player.x and player.y
+	
+	var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
+	response.end($keyCallback+":gameObjects:"+JSON.stringify($returnGameObjects)+":gameData:"+JSON.stringify($gameData))
 
-
-	// Store player location, send back all object locations and player scores for the player's map.
-		sparational.starspar.query("SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0);").then(([$gameObjects, metadata]) => {
-			$demonResults = $gameObjects.filter(o => {return o.objectname=="demon"})[0]
-			demon.x = $demonResults.locx
-			demon.y = $demonResults.locy
-			
-			// If collision
-			if (player.x <= (demon.x + 32)
-			&& demon.x <= (player.x + 32)
-			&& player.y <= (demon.y + 32)
-			&& demon.y <= (player.y + 32)) {
-				// choose & store demon location
-				sparational.starspar.query("SELECT resetDemon('"+$user+"');")
-			};//end collision calculations
-			
-            var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
-			response.end($keyCallback+":gameObjects:"+JSON.stringify($gameObjects)+":gameData:"+JSON.stringify($gameData))
-		}).catch(function(err) {
-			writeLog("Invalid updatePlayer2 attempt - SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0); - " + err.message)
-		})//end Pages query
-
-} // else if player.x and player.y are known.
 	} else {
 		writeLog('Invalid request.'); 
 		response.end('Invalid request.')
