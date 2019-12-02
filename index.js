@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 201
+$gameData.ver = 202
 
 //{ Init vars
 var $http = require("http");
@@ -57,6 +57,7 @@ function writeLog($msg) {
 };
 
 function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,objectOwner,updateLocation,objectType) {
+	console.log("addObject:"+objectName+","+mapName+","+locX+","+locY+","+hp+","+ammo+","+score+","+ticksremaining+","+objectOwner+","+updateLocation+","+objectType)
 	//Spawn the object
 	$r.push({'objectname':objectName,'mapname':mapName,'locx':locX,'locy':locY,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectOwner':objectOwner,'updateLocation':updateLocation,'objectType':objectType})
 	
@@ -130,6 +131,9 @@ if (request.method == "GET") {
 		gameSave();
 	}
 
+	if($r.filter(o => {return o.objectname == player.objectname}).length <0){
+		addObject($user,mapName,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,100,0,100,$user,1,'player')
+	}
 	
 	var $returnGameObjects
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
