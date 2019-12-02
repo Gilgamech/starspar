@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 235
+$gameData.ver = 236
 
 //{ Init vars
 var $http = require("http");
@@ -106,6 +106,7 @@ function gameTick() {
 	
 	$gameObjects = $gameObjects.filter(o => {return o.hp > 0})
 	for (object in $gameObjects) {
+		if(object.objecttype){object.objectType = object.objecttype}
 			if ($gameObjects[object].objectType == 'player') { //if player 
 				$gameObjects[object].ticksremaining--
 			}else if ($gameObjects[object].objectType == 'npc') { //if demon 
@@ -126,7 +127,7 @@ function gameTick() {
 		addObject('block',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,0,0,100,'block',0,'block');
 	}
 	if (Math.floor(Math.random() *1000) > 990) {
-		addObject('demon',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,0,0,1,'demon',0,'npc');
+		addObject('demon',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),1,'demon',0,'npc');
 	}
 };
 //}
