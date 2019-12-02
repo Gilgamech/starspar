@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 188
+$gameData.ver = 189
 
 //{ Init vars
 var $http = require("http");
@@ -19,19 +19,23 @@ map.x = 10000
 map.y = 10000
 map.name = 'noob'
 
-projectileSpeed = 100;
+projectileSpeed = 3;
 
 //How fast the game should update.
 var $ticks = 10
 var $tickDelay = (1000/$ticks)
+var $saves = 10
+var $saveDelay = (1000*$saves)
 var then = Date.now();
 var $cumulativeTick = 0;
+var $gameTick = 0;
+var $gameSave = 0;
 var $clickCheck = false;
 
 //load $gameObjects var.
 var $gameObjects;
 sparational.starspar.query("SELECT * FROM starsparLocations;").then(([$locResults, metadata]) => {
-	console.log($locResults)
+	$gameObjects = $locResults;
 }).catch(function(err) {
 	writeLog("Invalid locResults attempt - SELECT * FROM starsparLocations - " + err.message)
 	console.log("Invalid locResults attempt.") 
@@ -61,7 +65,6 @@ if (request.method == "GET") {
 	writeLog(request.method +" request from address:" + request.connection.remoteAddress + " on path: "+request.connection.remotePort+" for path " + request.url)
 
 	sparational.html("starspar.gilgamech.com",function($callback) {
-		//Need to add login to page.
 		response.end($callback) 
 	})
 
