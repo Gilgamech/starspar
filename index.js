@@ -1,7 +1,5 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
-var $gameData = {};
-$gameData.ver = 187
 
 //{ Init vars
 var $http = require("http");
@@ -70,7 +68,7 @@ if (request.method == "GET") {
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
 		sparational.starspar.query("SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"';").then(([$locResults, metadata]) => {
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
-			response.end($keyCallback+":scores:"+JSON.stringify($locResults)+":gameData:"+JSON.stringify($gameData))
+			response.end($keyCallback+":scores:"+JSON.stringify($locResults))
 		}).catch(function(err) {
 			writeLog("Invalid locResults attempt - SELECT * FROM starsparLocations where mapname = '"+map.name+"' AND ticksremaining > 0 OR objectName='"+$user+"' - " + err.message)
 			console.log("Invalid locResults attempt.") 
@@ -106,7 +104,7 @@ if (request.method == "GET") {
 
 	// Store player location, send back all object locations and player scores for the player's map.
 		sparational.starspar.query("SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0);").then(([$PagesResults, metadata]) => {
-			$demonResults = $gameObjects.filter(o => {return o.objectname=="demon"})[0]
+			$demonResults = $PagesResults.filter(o => {return o.objectname=="demon"})[0]
 			demon.x = $demonResults.locx
 			demon.y = $demonResults.locy
 			
@@ -120,7 +118,7 @@ if (request.method == "GET") {
 			};//end collision calculations
 			
             var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
-			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults)+":gameData:"+JSON.stringify($gameData))
+			response.end($keyCallback+":scores:"+JSON.stringify($PagesResults))
 		}).catch(function(err) {
 			writeLog("Invalid updatePlayer2 attempt - SELECT * FROM updatePlayer2('"+$user+"','"+map.name+"',"+player.x+","+player.y+",0); - " + err.message)
 		})//end Pages query
