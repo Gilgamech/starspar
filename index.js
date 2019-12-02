@@ -152,7 +152,7 @@ if (request.method == "GET") {
 			object.x = player.x;
 			object.y = player.y;
 		} else {
-			console.log("Player at x:"+player.x+" y:"+player.y+" but server has x:"+object+" y:"+object.y)
+			console.log("Player at x:"+player.x+" y:"+player.y+" but server has x:"+JSON.stringify(object)+" y:"+object.y)
 		}
 
 	if (player.mouseClicked == true && $clickCheck == false){
