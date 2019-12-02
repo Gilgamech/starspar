@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 208
+$gameData.ver = 209
 
 //{ Init vars
 var $http = require("http");
@@ -93,10 +93,10 @@ function gameTick() {
 	
 	$gameObjects = $gameObjects.filter(o => {return o.hp > 0})
 	//Add random block and demon.
-	if (Math.floor(Math.random() *100) > 90) {
+	if (Math.floor(Math.random() *1000) > 990) {
 		addObject('block',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,0,0,100,'block',0,'block');
 	}
-	if (Math.floor(Math.random() *100) > 90) {
+	if (Math.floor(Math.random() *1000) > 990) {
 		addObject('demon',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,0,0,1,'demon',0,'demon');
 	}
 };
@@ -138,6 +138,8 @@ if (request.method == "GET") {
 	}
 
 	if($gameObjects.filter(o => {return o.objectname == player.objectname}).length <=0){
+		console.log("Add Player")
+		addObject($user,mapName,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,100,0,100,$user,1,'player')
 	}
 	
 	var $returnGameObjects
