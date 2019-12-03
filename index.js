@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 269
+$gameData.ver = 270
 
 //{ Init vars
 var $http = require("http");
@@ -55,26 +55,26 @@ function writeLog($msg) {
 	}) //	.then()
 };
 
-function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,objectOwner,updateLocation,objectType) {
+function addObject(objectname,mapname,locx,locy,hp,ammo,score,ticksremaining,objectowner,updatelocation,objecttype) {
 	//Spawn the object
-	$gameObjects.push({'objectName':objectName,'mapName':mapName,'locX':locX,'locY':locY,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectOwner':objectOwner,'updateLocation':1,'objectType':objectType})
+	$gameObjects.push({'objectname':objectname,'mapname':mapname,'locx':locx,'locy':locy,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectowner':objectowner,'updatelocation':1,'objecttype':objecttype})
 	
 	//If projectile, remove ammo from the owner.
-	if (objectType = 'projectile') {
-		var object = $gameObjects.filter(o => {return o.objectname == objectOwner})[0]
+	if (objecttype = 'projectile') {
+		var object = $gameObjects.filter(o => {return o.objectname == objectowner})[0]
 		object.ammo--
 	}
 
 };
 
 function gameSave() { 
-	var $saveObjects = $gameObjects.filter(o => {return o.updateLocation == 1})
+	var $saveObjects = $gameObjects.filter(o => {return o.updatelocation == 1})
 	var $inputString = "INSERT INTO starsparLocations (objectname, mapname, locx, locy, hp, ammo, score, ticksremaining,objectowner,updatelocation,objecttype) VALUES "
 	var $updateString = ""
 	writeLog("gameSave count "+$saveObjects.length)
 	for(row = 0;row < $saveObjects.length;row++) {
 		if (typeof $saveObjects[row].id == "undefined"){
-			$inputString += "('"+$saveObjects[row].objectName+"', '"+$saveObjects[row].mapName+"', '"+$saveObjects[row].locx+"', '"+$saveObjects[row].locy+"', '"+$saveObjects[row].hp+"', '"+$saveObjects[row].ammo+"', '"+$saveObjects[row].score+"', '"+$saveObjects[row].ticksremaining+"', '"+$saveObjects[row].objectOwner+"', 0, '"+$saveObjects[row].objectType+"');"
+			$inputString += "('"+$saveObjects[row].objectname+"', '"+$saveObjects[row].mapname+"', '"+$saveObjects[row].locx+"', '"+$saveObjects[row].locy+"', '"+$saveObjects[row].hp+"', '"+$saveObjects[row].ammo+"', '"+$saveObjects[row].score+"', '"+$saveObjects[row].ticksremaining+"', '"+$saveObjects[row].objectowner+"', 0, '"+$saveObjects[row].objecttype+"');"
 		}else{
 		}
 	}
