@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 279
+$gameData.ver = 280
 
 //{ Init vars
 var $http = require("http");
@@ -34,15 +34,13 @@ var $clickCheck = false;
 
 //load $gameObjects var.
 var $gameObjects;
-sparational.starspar.query("SELECT * FROM starsparLocations;").then(([$locResults, metadata]) => {
-	$gameObjects = $locResults;
-}).catch(function(err) {
-	writeLog("Invalid locResults attempt - SELECT * FROM starsparLocations - " + err.message)
-	console.log("Invalid locResults attempt.") 
-})
 
 //AWS
 var AWS = require('aws-sdk');
+var awsAccessKey = (process.env.AWS_S3_KEY || 'ASecretToEverybody')
+var awsSecretKey = (process.env.AWS_S3_SECRET_KEY || 'TimeWaitsForNobody')
+var awsRegion = (process.env.AWS_S3_REGION || 'us-west-2')
+AWS.config.update({ accessKeyId: awsAccessKey, secretAccessKey: awsSecretKey, region: awsRegion});
 var s3 = new AWS.S3();
 
 var BUCKET_NAME = 'gilpublic'
@@ -51,8 +49,14 @@ var s3Params = {
 	Bucket: BUCKET_NAME,
 	Key: file
 };
-var $gameObjectsTest = s3.getObject(s3Params)
-console.log("gameObjectsTest: "+JSON.stringify($gameObjectsTest[0]))
+s3.getObject(s3Params, function (err, data) {
+    if (err) {
+        console.log("$gameObjectsTest err: "+err);
+    } else {
+		$gameObjects = JSON.parse(data.Body)
+        console.log("$gameObjectsTest data: "+JSON.stringify($gameObjects[0])); //this will log data to console
+    }
+})
 //}
 
 //{ functions
