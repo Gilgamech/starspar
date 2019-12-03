@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 276
+$gameData.ver = 277
 
 //{ Init vars
 var $http = require("http");
@@ -40,6 +40,19 @@ sparational.starspar.query("SELECT * FROM starsparLocations;").then(([$locResult
 	writeLog("Invalid locResults attempt - SELECT * FROM starsparLocations - " + err.message)
 	console.log("Invalid locResults attempt.") 
 })
+
+//AWS
+var AWS = require('aws-sdk');
+var s3 = new AWS.S3();
+
+var BUCKET_NAME = 'gilpublic'
+var file = 'starspar/gamesave.json'
+var s3Params = {
+	Bucket: BUCKET_NAME,
+	Key: file
+};
+var $gameObjectsTest = s3.getObject(s3Params)
+console.log("gameObjectsTest: "+JSON.stringify($gameObjectsTest))
 //}
 
 //{ functions
