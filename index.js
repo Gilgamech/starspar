@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 263
+$gameData.ver = 264
 
 //{ Init vars
 var $http = require("http");
@@ -70,7 +70,7 @@ function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,obj
 function gameSave() { 
 	var $saveObjects = $gameObjects.filter(o => {return o.updateLocation == 1})
 	console.log("gameSave count "+$saveObjects.length)
-	for(row = 0;row < $saveObjects.length;row++) {
+	for(row = 0;row < $saveObjects.length-1;row++) {
 	writeLog("gameSave line "+row+" row "+JSON.stringify($saveObjects[row]))
 		if (typeof $saveObjects[row].id != "undefined"){
 			sparational.sequelize.query("UPDATE starsparLocations SET locx="+$saveObjects[row].locX+", locy="+$saveObjects[row].locY+", hp="+$saveObjects[row].hp+",ticksremaining="+$saveObjects[row].ticksremaining+",updateLocation=0 WHERE id="+$saveObjects[row].id+";").then(([$PagesResults, metadata]) => {
