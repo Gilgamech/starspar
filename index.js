@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 282
+$gameData.ver = 283
 
 //{ Init vars
 var $http = require("http");
@@ -139,6 +139,26 @@ function gameTick() {
 	$gameObjects = $gameObjects.filter(o => {return o.hp > 0})
 	for (object in $gameObjects) {
 		if(object.objecttype){object.objectType = object.objecttype}
+		if (player.x <= (demon.x + 32)
+		&& demon.x <= (player.x + 32)
+		&& player.y <= (demon.y + 32)
+		&& demon.y <= (player.y + 32)) {
+			if ($gameObjects[object].objectType == 'player' || $gameObjects[object].objecttype == 'player') { //if player 
+				// If collision with other player
+			}else if ($gameObjects[object].objectType == 'npc' || $gameObjects[object].objecttype == 'npc') { //if demon 
+				// If collision with demon
+			}else if ($gameObjects[object].objectType == 'projectile' || $gameObjects[object].objecttype == 'projectile') { //if projectile 
+				$gameObjects[object].hp--
+				object.updateLocation = 1
+				//score = score+1 where objectname = var_r.objectowner
+			}else if ($gameObjects[object].objectType == 'ammo' || $gameObjects[object].objecttype == 'ammo') { //if projectile 
+				// If player collision with ammo
+				$gameObjects[object].ammo += 25
+				object.updateLocation = 1
+			}else if ($gameObjects[object].objectType == 'block' || $gameObjects[object].objecttype == 'block') { //if block
+			}else { //everyone else
+			}	
+		} else {
 			if ($gameObjects[object].objectType == 'player' || $gameObjects[object].objecttype == 'player') { //if player 
 				$gameObjects[object].ticksremaining--
 			}else if ($gameObjects[object].objectType == 'npc' || $gameObjects[object].objecttype == 'npc') { //if demon 
