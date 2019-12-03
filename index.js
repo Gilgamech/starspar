@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 247
+$gameData.ver = 248
 
 //{ Init vars
 var $http = require("http");
@@ -71,7 +71,6 @@ function gameSave() {
 	$saveObjects = $gameObjects.filter(o => {return o.updateLocation == 1})
 	console.log("gameSave count "+$saveObjects.length)
 	for(row = 0;row < $saveObjects.length;row++) {
-	console.log("gameSave row "+row)
 		if (typeof $saveObjects[row].id != "undefined"){
 			sparational.sequelize.query("UPDATE starsparLocations SET locx='"+$saveObjects[row].locX+"', locy='"+$saveObjects[row].locY+"', hp='"+$saveObjects[row].hp+"',ticksremaining='"+$saveObjects[row].ticksremaining+"',updateLocation=0 WHERE id=''"+$saveObjects[row].id+"'';").then(([$PagesResults, metadata]) => {
 				writeLog("gameSave update id "+$saveObjects[row].id+" results: "+ metadata)
@@ -79,7 +78,7 @@ function gameSave() {
 				writeLog('gameSave update error: '+err.message); 
 			}) 
 		}else{
-			sparational.sequelize.query("INSERT INTO starsparLocations (objectname, mapname, locx, locy, hp, ammo, score, ticksremaining,objectowner,updatelocation,objectyype) SELECT '"+$saveObjects[row].objectName+"', '"+$saveObjects[row].mapName+"', '"+$saveObjects[row].locX+"', '"+$saveObjects[row].locY+"', '"+$saveObjects[row].hp+"', '"+$saveObjects[row].ammo+"', '"+$saveObjects[row].score+"', '"+$saveObjects[row].ticksremaining+"', '"+$saveObjects[row].objectOwner+"', 0, '"+$saveObjects[row].objectType+"';").then(([$PagesResults, metadata]) => {
+			sparational.sequelize.query("INSERT INTO starsparLocations (objectname, mapname, locx, locy, hp, ammo, score, ticksremaining,updatelocation,objectype) SELECT '"+$saveObjects[row].objectName+"', '"+$saveObjects[row].mapName+"', '"+$saveObjects[row].locX+"', '"+$saveObjects[row].locY+"', '"+$saveObjects[row].hp+"', '"+$saveObjects[row].ammo+"', '"+$saveObjects[row].score+"', '"+$saveObjects[row].ticksremaining+"', 0, '"+$saveObjects[row].objectType+"';").then(([$PagesResults, metadata]) => {
 				writeLog("gameSave Insert results: "+ metadata)
 			}).catch(function(err) {
 				writeLog('gameSave Insert error: '+err.message); 
