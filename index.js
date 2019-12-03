@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 277
+$gameData.ver = 278
 
 //{ Init vars
 var $http = require("http");
@@ -52,7 +52,7 @@ var s3Params = {
 	Key: file
 };
 var $gameObjectsTest = s3.getObject(s3Params)
-console.log("gameObjectsTest: "+JSON.stringify($gameObjectsTest))
+console.log("gameObjectsTest: "+JSON.stringify($gameObjectsTest[0]))
 //}
 
 //{ functions
