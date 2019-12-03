@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 254
+$gameData.ver = 255
 
 //{ Init vars
 var $http = require("http");
@@ -57,7 +57,7 @@ function writeLog($msg) {
 
 function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,objectOwner,updateLocation,objectType) {
 	//Spawn the object
-	$gameObjects.push({'objectname':objectName,'mapname':mapName,'locx':locX,'locy':locY,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectOwner':objectOwner,'updateLocation':1,'objectType':objectType})
+	$gameObjects.push({'objectName':objectName,'mapName':mapName,'locX':locX,'locY':locY,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectOwner':objectOwner,'updateLocation':1,'objectType':objectType})
 	
 	//If projectile, remove am	mo from the owner.
 	if (objectType = 'projectile') {
