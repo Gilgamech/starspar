@@ -11,6 +11,7 @@
     "test": "node test.js"
   },
   "dependencies": {
+    "aws-sdk": "^2.583.0",
     "pg": "^7.12.1",
     "sequelize": "5.21.1",
     "sparational": "1.1.8"
