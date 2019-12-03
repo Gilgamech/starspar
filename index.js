@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 270
+$gameData.ver = 272
 
 //{ Init vars
 var $http = require("http");
@@ -68,7 +68,7 @@ function addObject(objectname,mapname,locx,locy,hp,ammo,score,ticksremaining,obj
 };
 
 function gameSave() { 
-	var $saveObjects = $gameObjects.filter(o => {return o.updatelocation == 1})
+	var $saveObjects = $gameObjects.filter(o => {return o.updatelocation == 1}).filter(o => {return o.objectname != "ammodrop"})
 	var $inputString = "INSERT INTO starsparLocations (objectname, mapname, locx, locy, hp, ammo, score, ticksremaining,objectowner,updatelocation,objecttype) VALUES "
 	var $updateString = ""
 	writeLog("gameSave count "+$saveObjects.length)
