@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 253
+$gameData.ver = 254
 
 //{ Init vars
 var $http = require("http");
@@ -78,10 +78,11 @@ function gameSave() {
 				writeLog('gameSave update error: '+err.message); 
 			}) 
 		}else{
-			sparational.sequelize.query("INSERT INTO starsparLocations (objectname, mapname, locx, locy, hp, ammo, score, ticksremaining) SELECT '"+$saveObjects[row].objectName+"', '"+$saveObjects[row].mapName+"', "+$saveObjects[row].locX+", "+$saveObjects[row].locY+", "+$saveObjects[row].hp+", "+$saveObjects[row].ammo+", "+$saveObjects[row].score+", "+$saveObjects[row].ticksremaining +";").then(([$PagesResults, metadata]) => {
+			sparational.sequelize.query("INSERT INTO starsparLocations (objectname, mapname, locx, locy, hp, ammo, score, ticksremaining,objectowner,updatelocation,objecttype) SELECT '"+$saveObjects[row].objectName+"', '"+$saveObjects[row].mapName+"', '"+$saveObjects[row].locX+"', '"+$saveObjects[row].locY+"', '"+$saveObjects[row].hp+"', '"+$saveObjects[row].ammo+"', '"+$saveObjects[row].score+"', '"+$saveObjects[row].ticksremaining+"', '"+$saveObjects[row].objectOwner+"', 0, '"+$saveObjects[row].objectType+"';").then(([$PagesResults, metadata]) => {
 				writeLog("gameSave Insert results: "+ metadata)
 			}).catch(function(err) {
 				writeLog('gameSave Insert error: '+err.message); 
+				writeLog($saveObjects[row].objectName+"', '"+$saveObjects[row].mapName+"', '"+$saveObjects[row].locX+"', '"+$saveObjects[row].locY+"', '"+$saveObjects[row].hp+"', '"+$saveObjects[row].ammo+"', '"+$saveObjects[row].score+"', '"+$saveObjects[row].ticksremaining+"', '"+$saveObjects[row].objectOwner+"', 0, '"+$saveObjects[row].objectType); 
 			}) 
 		}
 	}
