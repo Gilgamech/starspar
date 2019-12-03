@@ -74,7 +74,7 @@ function gameSave() {
 	writeLog("gameSave count "+$saveObjects.length)
 	for(row = 0;row < $saveObjects.length;row++) {
 		if (typeof $saveObjects[row].id == "undefined"){
-			$inputString += "('"+$saveObjects[row].objectname+"', '"+$saveObjects[row].mapname+"', '"+$saveObjects[row].locx+"', '"+$saveObjects[row].locy+"', '"+$saveObjects[row].hp+"', '"+$saveObjects[row].ammo+"', '"+$saveObjects[row].score+"', '"+$saveObjects[row].ticksremaining+"', '"+$saveObjects[row].objectowner+"', 0, '"+$saveObjects[row].objecttype+"');"
+			$inputString += "('"+$saveObjects[row].objectname+"', '"+$saveObjects[row].mapname+"', "+$saveObjects[row].locx+", "+$saveObjects[row].locy+", "+$saveObjects[row].hp+", "+$saveObjects[row].ammo+", "+$saveObjects[row].score+", "+$saveObjects[row].ticksremaining+", '"+$saveObjects[row].objectowner+"', 0, '"+$saveObjects[row].objecttype+"');"
 		}else{
 		}
 	}
