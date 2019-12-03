@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 265
+$gameData.ver = 266
 
 //{ Init vars
 var $http = require("http");
@@ -59,7 +59,7 @@ function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,obj
 	//Spawn the object
 	$gameObjects.push({'objectName':objectName,'mapName':mapName,'locX':locX,'locY':locY,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectOwner':objectOwner,'updateLocation':1,'objectType':objectType})
 	
-	//If projectile, remove am	mo from the owner.
+	//If projectile, remove ammo from the owner.
 	if (objectType = 'projectile') {
 		var object = $gameObjects.filter(o => {return o.objectname == objectOwner})[0]
 		object.ammo--
@@ -69,22 +69,20 @@ function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,obj
 
 function gameSave() { 
 	var $saveObjects = $gameObjects.filter(o => {return o.updateLocation == 1})
+	var $queryString = ""
 	writeLog("gameSave count "+$saveObjects.length)
-	for(row = 0;row < $saveObjects.length-1;row++) {
+	for(row = 0;row < $saveObjects.length;row++) {
 		if (typeof $saveObjects[row].id != "undefined"){
-			sparational.sequelize.query("UPDATE starsparLocations SET locx="+$saveObjects[row].locx+", locy="+$saveObjects[row].locy+", hp="+$saveObjects[row].hp+",ticksremaining="+$saveObjects[row].ticksremaining+",updateLocation=0 WHERE id="+$saveObjects[row].id+";").then(([$PagesResults, metadata]) => {
-				writeLog("gameSave update id "+$saveObjects[row].id+" results: "+ metadata)
-			}).catch(function(err) {
-				writeLog('gameSave row '+row+' update '+JSON.stringify($saveObjects[row])+' error: '+err.message); 
-			}) 
+			$queryString += "UPDATE starsparLocations SET locx="+$saveObjects[row].locx+", locy="+$saveObjects[row].locy+", hp="+$saveObjects[row].hp+",ticksremaining="+$saveObjects[row].ticksremaining+",updateLocation=0 WHERE id="+$saveObjects[row].id+";"
 		}else{
-			sparational.sequelize.query("INSERT INTO starsparLocations (objectname, mapname, locx, locy, hp, ammo, score, ticksremaining,objectowner,updatelocation,objecttype) SELECT '"+$saveObjects[row].objectName+"', '"+$saveObjects[row].mapName+"', '"+$saveObjects[row].locx+"', '"+$saveObjects[row].locy+"', '"+$saveObjects[row].hp+"', '"+$saveObjects[row].ammo+"', '"+$saveObjects[row].score+"', '"+$saveObjects[row].ticksremaining+"', '"+$saveObjects[row].objectOwner+"', 0, '"+$saveObjects[row].objectType+"';").then(([$PagesResults, metadata]) => {
-				writeLog("gameSave Insert results: "+ metadata)
-			}).catch(function(err) {
-				writeLog('gameSave row '+row+' Insert '+JSON.stringify($saveObjects[row])+' error: '+err.message); 
-			}) 
+			$queryString += "INSERT INTO starsparLocations (objectname, mapname, locx, locy, hp, ammo, score, ticksremaining,objectowner,updatelocation,objecttype) SELECT '"+$saveObjects[row].objectName+"', '"+$saveObjects[row].mapName+"', '"+$saveObjects[row].locx+"', '"+$saveObjects[row].locy+"', '"+$saveObjects[row].hp+"', '"+$saveObjects[row].ammo+"', '"+$saveObjects[row].score+"', '"+$saveObjects[row].ticksremaining+"', '"+$saveObjects[row].objectOwner+"', 0, '"+$saveObjects[row].objectType+"';"
 		}
 	}
+	sparational.sequelize.query($queryString).then(([$PagesResults, metadata]) => {
+		writeLog("gameSave results: "+ metadata)
+	}).catch(function(err) {
+		writeLog('gameSave Insert '+JSON.stringify($queryString)+' error: '+err.message); 
+	}) 
 };
 
 function moveObject(object) { 
