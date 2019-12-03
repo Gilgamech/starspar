@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 285
+$gameData.ver = 286
 
 //{ Init vars
 var $http = require("http");
@@ -26,7 +26,7 @@ projectileSpeed = 3;
 var $ticks = 10
 var $tickDelay = (1000/$ticks)
 var $saves = 60
-var $saveDelay = (100*1000*$saves)
+var $saveDelay = (1000*1000*$saves)
 var then = Date.now();
 var $gameTick = 0;
 var $gameSave = 0;
@@ -97,7 +97,7 @@ function gameSave() {
 		if (err) {
 			console.log("gameSave err: "+err);
 		} else {
-			console.log("gameSave test data: "+data); //this will log data to console
+			console.log("gameSave test data: "+JSON.stringify(data)); //this will log data to console
 		}
 	});
 };
