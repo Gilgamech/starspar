@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 280
+$gameData.ver = 281
 
 //{ Init vars
 var $http = require("http");
@@ -45,16 +45,16 @@ var s3 = new AWS.S3();
 
 var BUCKET_NAME = 'gilpublic'
 var file = 'starspar/gamesave.json'
-var s3Params = {
+var getParams = {
 	Bucket: BUCKET_NAME,
 	Key: file
 };
-s3.getObject(s3Params, function (err, data) {
+s3.getObject(getParams, function (err, data) {
     if (err) {
-        console.log("$gameObjectsTest err: "+err);
+        console.log("gameObjects err: "+err);
     } else {
 		$gameObjects = JSON.parse(data.Body)
-        console.log("$gameObjectsTest data: "+JSON.stringify($gameObjects[0])); //this will log data to console
+        console.log("gameObjects test data: "+JSON.stringify($gameObjects[0])); //this will log data to console
     }
 })
 //}
@@ -86,21 +86,19 @@ function addObject(objectname,mapname,locx,locy,hp,ammo,score,ticksremaining,obj
 
 function gameSave() { 
 	var $saveObjects = $gameObjects.filter(o => {return o.updatelocation == 1}).filter(o => {return o.objectname != "ammodrop"})
-	var $inputString = "INSERT INTO starsparLocations (objectname, mapname, locx, locy, hp, ammo, score, ticksremaining,objectowner,updatelocation,objecttype) VALUES "
-	var $updateString = ""
-	writeLog("gameSave count "+$saveObjects.length)
-	for(row = 0;row < $saveObjects.length;row++) {
-		if (typeof $saveObjects[row].id == "undefined"){
-			$inputString += "('"+$saveObjects[row].objectname+"', '"+$saveObjects[row].mapname+"', "+$saveObjects[row].locx+", "+$saveObjects[row].locy+", "+$saveObjects[row].hp+", "+$saveObjects[row].ammo+", "+$saveObjects[row].score+", "+$saveObjects[row].ticksremaining+", '"+$saveObjects[row].objectowner+"', 0, '"+$saveObjects[row].objecttype+"'),"
-		}else{
+	var putParams = {
+		Bucket: BUCKET_NAME,
+		Key: file,
+		Body: JSON.stringify($saveObjects),
+		ContentType: "application/json"
+	};
+	s3.putObject(putParams,function (err,data) {
+		if (err) {
+			console.log("gameSave err: "+err);
+		} else {
+			console.log("gameSave test data: "+data.Body.toString()); //this will log data to console
 		}
-	}
-	$inputString = $inputString.slice(0,$inputString.length-1)+";"
-	sparational.sequelize.query($inputString+$updateString).then(([$PagesResults, metadata]) => {
-		writeLog("gameSave results: "+ metadata)
-	}).catch(function(err) {
-		console.log('gameSave Insert '+JSON.stringify($inputString+$updateString)+' error: '+err.message); 
-	}) 
+	});
 };
 
 function moveObject(object) { 
