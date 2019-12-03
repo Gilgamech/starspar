@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 272
+$gameData.ver = 273
 
 //{ Init vars
 var $http = require("http");
@@ -74,10 +74,11 @@ function gameSave() {
 	writeLog("gameSave count "+$saveObjects.length)
 	for(row = 0;row < $saveObjects.length;row++) {
 		if (typeof $saveObjects[row].id == "undefined"){
-			$inputString += "('"+$saveObjects[row].objectname+"', '"+$saveObjects[row].mapname+"', "+$saveObjects[row].locx+", "+$saveObjects[row].locy+", "+$saveObjects[row].hp+", "+$saveObjects[row].ammo+", "+$saveObjects[row].score+", "+$saveObjects[row].ticksremaining+", '"+$saveObjects[row].objectowner+"', 0, '"+$saveObjects[row].objecttype+"');"
+			$inputString += "('"+$saveObjects[row].objectname+"', '"+$saveObjects[row].mapname+"', "+$saveObjects[row].locx+", "+$saveObjects[row].locy+", "+$saveObjects[row].hp+", "+$saveObjects[row].ammo+", "+$saveObjects[row].score+", "+$saveObjects[row].ticksremaining+", '"+$saveObjects[row].objectowner+"', 0, '"+$saveObjects[row].objecttype+"'),"
 		}else{
 		}
 	}
+	$inputString.slice(0,$inputString.length-1)+";"
 	sparational.sequelize.query($inputString+$updateString).then(([$PagesResults, metadata]) => {
 		writeLog("gameSave results: "+ metadata)
 	}).catch(function(err) {
