@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 283
+$gameData.ver = 284
 
 //{ Init vars
 var $http = require("http");
@@ -97,7 +97,7 @@ function gameSave() {
 		if (err) {
 			console.log("gameSave err: "+err);
 		} else {
-			console.log("gameSave test data: "+data.Body.toString()); //this will log data to console
+			console.log("gameSave test data: "+data); //this will log data to console
 		}
 	});
 };
@@ -172,6 +172,7 @@ function gameTick() {
 			}else if ($gameObjects[object].objectType == 'block' || $gameObjects[object].objecttype == 'block') { //if block
 			}else { //everyone else
 			}	
+		} // end if object
 	} // end for object
 
 	//Add random block and demon.
