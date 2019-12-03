@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 273
+$gameData.ver = 274
 
 //{ Init vars
 var $http = require("http");
@@ -78,7 +78,7 @@ function gameSave() {
 		}else{
 		}
 	}
-	$inputString.slice(0,$inputString.length-1)+";"
+	$inputString = $inputString.slice(0,$inputString.length-1)+";"
 	sparational.sequelize.query($inputString+$updateString).then(([$PagesResults, metadata]) => {
 		writeLog("gameSave results: "+ metadata)
 	}).catch(function(err) {
