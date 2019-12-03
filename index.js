@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 267
+$gameData.ver = 268
 
 //{ Init vars
 var $http = require("http");
@@ -69,16 +69,16 @@ function addObject(objectName,mapName,locX,locY,hp,ammo,score,ticksremaining,obj
 
 function gameSave() { 
 	var $saveObjects = $gameObjects.filter(o => {return o.updateLocation == 1})
-	var $queryString = ""
+	var $inputString = "INSERT INTO starsparLocations (objectname, mapname, locx, locy, hp, ammo, score, ticksremaining,objectowner,updatelocation,objecttype) VALUES "
+	var $updateString = ""
 	writeLog("gameSave count "+$saveObjects.length)
 	for(row = 0;row < $saveObjects.length;row++) {
-		if (typeof $saveObjects[row].id != "undefined"){
-			$queryString += "UPDATE starsparLocations SET locx="+$saveObjects[row].locx+", locy="+$saveObjects[row].locy+", hp="+$saveObjects[row].hp+",ticksremaining="+$saveObjects[row].ticksremaining+",updateLocation=0 WHERE id="+$saveObjects[row].id+";"
+		if (typeof $saveObjects[row].id == "undefined"){
+			$inputString += "('"+$saveObjects[row].objectName+"', '"+$saveObjects[row].mapName+"', '"+$saveObjects[row].locx+"', '"+$saveObjects[row].locy+"', '"+$saveObjects[row].hp+"', '"+$saveObjects[row].ammo+"', '"+$saveObjects[row].score+"', '"+$saveObjects[row].ticksremaining+"', '"+$saveObjects[row].objectOwner+"', 0, '"+$saveObjects[row].objectType+"');"
 		}else{
-			$queryString += "INSERT INTO starsparLocations (objectname, mapname, locx, locy, hp, ammo, score, ticksremaining,objectowner,updatelocation,objecttype) SELECT '"+$saveObjects[row].objectName+"', '"+$saveObjects[row].mapName+"', '"+$saveObjects[row].locx+"', '"+$saveObjects[row].locy+"', '"+$saveObjects[row].hp+"', '"+$saveObjects[row].ammo+"', '"+$saveObjects[row].score+"', '"+$saveObjects[row].ticksremaining+"', '"+$saveObjects[row].objectOwner+"', 0, '"+$saveObjects[row].objectType+"';"
 		}
 	}
-	sparational.sequelize.query($queryString).then(([$PagesResults, metadata]) => {
+	sparational.sequelize.query($inputString).then(([$PagesResults, metadata]) => {
 		writeLog("gameSave results: "+ metadata)
 	}).catch(function(err) {
 		console.log('gameSave Insert '+JSON.stringify($queryString)+' error: '+err.message); 
