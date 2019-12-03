@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 281
+$gameData.ver = 282
 
 //{ Init vars
 var $http = require("http");
@@ -85,12 +85,13 @@ function addObject(objectname,mapname,locx,locy,hp,ammo,score,ticksremaining,obj
 };
 
 function gameSave() { 
-	var $saveObjects = $gameObjects.filter(o => {return o.updatelocation == 1}).filter(o => {return o.objectname != "ammodrop"})
+	//var $saveObjects = $gameObjects.filter(o => {return o.updatelocation == 1}).filter(o => {return o.objectname != "ammodrop"})
 	var putParams = {
 		Bucket: BUCKET_NAME,
 		Key: file,
-		Body: JSON.stringify($saveObjects),
-		ContentType: "application/json"
+		Body: JSON.stringify($gameObjects),
+		ContentType: "application/json",
+		ACL: 'public-read'
 	};
 	s3.putObject(putParams,function (err,data) {
 		if (err) {
