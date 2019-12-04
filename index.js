@@ -153,6 +153,41 @@ function gameTick() {
 		$gameObjects[object].ticksremaining--
 	}
 
+	for (object in $gameObjects.filter(o => {return o.objectType != 'block'}).filter(o => {return o.objectType != 'player'}).filter(o => {return o.objectType != 'npc'})) { // Collision
+		for (collidingObject in $gameObjects) { // receiving
+			if (object.x <= (collidingObject.x + 32)
+			&& collidingObject.x <= (object.x + 32)
+			&& object.y <= (collidingObject.y + 32)
+			&& collidingObject.y <= (object.y + 32)) {
+				if ($gameObjects[object].objecttype == 'projectile') { //if projectile 
+					$gameObjects[collidingObject].hp--
+					$gameObjects[object].hp = 0
+					$gameObjects[$gameObjects[object].objectowner].score++
+				}else if ($gameObjects[object].objecttype == 'ammo') { //if ammo 
+					// If collision with ammo
+					if ($gameObjects[collidingObject].objecttype == 'player') { //if object 
+						$gameObjects[collidingObject].ammo += 25
+						$gameObjects[object].hp = 0
+					}
+				}	
+			} // end if object
+		} // end for object
+	} // end for object
+
+	for (object in $gameObjects.filter(o => {return o.objectType != 'block'}).filter(o => {return o.objectType != 'projectile'})) { // Collision
+		for (collidingObject in $gameObjects) { // receiving
+			if (object.x <= (collidingObject.x + 32)
+			&& collidingObject.x <= (object.x + 32)
+			&& object.y <= (collidingObject.y + 32)
+			&& collidingObject.y <= (object.y + 32)) {
+
+				if (object.x < collidingObject.x) {object.x -= 10}
+				if (object.x > collidingObject.x) {object.x += 10}
+				if (object.y < collidingObject.y) {object.y -= 10}
+				if (object.y > collidingObject.y) {object.y += 10}
+					
+			} // end if object
+		} // end for object
 	} // end for object
 
 	//Add random block and demon.
