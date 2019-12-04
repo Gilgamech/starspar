@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 295
+$gameData.ver = 296
 
 //{ Init vars
 var $http = require("http");
@@ -151,6 +151,22 @@ function gameTick() {
 		}else if ($gameObjects[object].objectType == 'block' || $gameObjects[object].objecttype == 'block') { //if block
 		}else { //everyone else
 		}	
+	} // end for object
+
+	for (object in $gameObjects.filter(o => {return o.objecttype != 'block'}).filter(o => {return o.objecttype != 'projectile'})) { // Collision
+		for (collidingObject in $gameObjects) { // receiving
+			if (object.x <= (collidingObject.x + 32)
+			&& collidingObject.x <= (object.x + 32)
+			&& object.y <= (collidingObject.y + 32)
+			&& collidingObject.y <= (object.y + 32)) {
+
+				if (object.x < collidingObject.x) {object.x -= 10}
+				if (object.x > collidingObject.x) {object.x += 10}
+				if (object.y < collidingObject.y) {object.y -= 10}
+				if (object.y > collidingObject.y) {object.y += 10}
+					
+			} // end if object
+		} // end for object
 	} // end for object
 
 
