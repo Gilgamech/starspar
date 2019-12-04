@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 292
+$gameData.ver = 293
 
 //{ Init vars
 var $http = require("http");
@@ -136,22 +136,21 @@ function gameTick() {
 		}	
 	}
 	
-	$gameObjects = $gameObjects.filter(o => {return o.hp > 0})
-	for (object in $gameObjects.filter(o => {return o.objecttype != 'block'}).filter(o => {return o.objecttype != 'player'})) { // Move non blocks and non players.
-		moveObject($gameObjects[object])
-	}
-
-	for (object in $gameObjects.filter(o => {return o.objecttype == 'projectile'})) { // Move non blocks and non players.
-		$gameObjects[object].hp--
-	}
-
-	for (object in $gameObjects.filter(o => {return o.objecttype == 'ammo'})) { // Move non blocks and non players.
-		$gameObjects[object].hp--
-	}
-
-	for (object in $gameObjects.filter(o => {return o.objecttype == 'player'})) { // Move non blocks and non players.
-		$gameObjects[object].ticksremaining--
-	}
+    for (object in $gameObjects.filter(o => {return o.objecttype != 'block'})) {
+        if(object.objecttype){object.objectType = object.objecttype}
+            if ($gameObjects[object].objectType == 'player' || $gameObjects[object].objecttype == 'player') { //if player 
+                $gameObjects[object].ticksremaining--
+            }else if ($gameObjects[object].objectType == 'npc' || $gameObjects[object].objecttype == 'npc') { //if demon 
+                moveObject($gameObjects[object])
+            }else if ($gameObjects[object].objectType == 'projectile' || $gameObjects[object].objecttype == 'projectile') { //if prjectile
+                $gameObjects[object].hp--
+                moveObject($gameObjects[object])
+            }else if ($gameObjects[object].objectType == 'ammo' || $gameObjects[object].objecttype == 'ammo') { //if projectile 
+                $gameObjects[object].hp--
+                moveObject($gameObjects[object])
+			}    
+		}    
+	}    
 
 
 	//Add random block and demon.
