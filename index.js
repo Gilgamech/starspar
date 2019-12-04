@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 299
+$gameData.ver = 300
 
 //{ Init vars
 var $http = require("http");
@@ -154,24 +154,6 @@ function gameTick() {
 	} // end for object
 
 			
-
-	for (object in $gameObjects.filter(o => {return o.objectType != 'block'}).filter(o => {return o.objectType != 'projectile'})) { // Collision
-		for (collidingObject in $gameObjects) { // receiving
-			if (object.x <= (collidingObject.x + 32)
-			&& collidingObject.x <= (object.x + 32)
-			&& object.y <= (collidingObject.y + 32)
-			&& collidingObject.y <= (object.y + 32)) {
-
-				if (object.x < collidingObject.x) {object.x -= 10}
-				if (object.x > collidingObject.x) {object.x += 10}
-				if (object.y < collidingObject.y) {object.y -= 10}
-				if (object.y > collidingObject.y) {object.y += 10}
-					
-			} // end if object
-		} // end for object
-	} // end for object
-
-
 	//Add random block and demon.
 	if (Math.floor(Math.random() *1000) > 990) {
 		addObject('block',map.name,Math.round((Math.random() * 250))*40,Math.round((Math.random() * 250))*40,10,0,0,100,'block',1,'block');
