@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 300
+$gameData.ver = 301
 
 //{ Init vars
 var $http = require("http");
@@ -199,6 +199,7 @@ if (request.method == "GET") {
 		$gameTick -= $tickDelay;
         gameTick();
 	}
+	then = now;
 
 	if($gameObjects.filter(o => {return o.objectname == player.objectname}).length <=0){
 	}
