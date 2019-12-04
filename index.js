@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 301
+$gameData.ver = 307
 
 //{ Init vars
 var $http = require("http");
