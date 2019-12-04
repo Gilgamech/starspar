@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 297
+$gameData.ver = 298
 
 //{ Init vars
 var $http = require("http");
@@ -154,19 +154,19 @@ function gameTick() {
 	} // end for object
 
 			
-	for (object in $gameObjects.filter(o => {return o.objecttype != 'block'}).filter(o => {return o.objecttype != 'player'}).filter(o => {return o.objecttype != 'npc'})) { // Collision
+	for (object in $gameObjects.filter(o => {return o.objectType != 'block'}).filter(o => {return o.objectType != 'player'}).filter(o => {return o.objectType != 'npc'})) { // Collision
 		for (collidingObject in $gameObjects) { // receiving
 			if (object.x <= (collidingObject.x + 32)
 			&& collidingObject.x <= (object.x + 32)
 			&& object.y <= (collidingObject.y + 32)
 			&& collidingObject.y <= (object.y + 32)) {
-				if ($gameObjects[object].objecttype == 'projectile') { //if projectile 
+				if ($gameObjects[object].objectType == 'projectile') { //if projectile 
 					$gameObjects[collidingObject].hp--
 					$gameObjects[object].hp = 0
 					$gameObjects[$gameObjects[object].objectowner].score++
-				}else if ($gameObjects[object].objecttype == 'ammo') { //if ammo 
+				}else if ($gameObjects[object].objectType == 'ammo') { //if ammo 
 					// If collision with ammo
-					if ($gameObjects[collidingObject].objecttype == 'player') { //if object 
+					if ($gameObjects[collidingObject].objectType == 'player') { //if object 
 						$gameObjects[collidingObject].ammo += 25
 						$gameObjects[object].hp = 0
 					}
@@ -175,7 +175,7 @@ function gameTick() {
 		} // end for object
 	} // end for object
 
-	for (object in $gameObjects.filter(o => {return o.objecttype != 'block'}).filter(o => {return o.objecttype != 'projectile'})) { // Collision
+	for (object in $gameObjects.filter(o => {return o.objectType != 'block'}).filter(o => {return o.objectType != 'projectile'})) { // Collision
 		for (collidingObject in $gameObjects) { // receiving
 			if (object.x <= (collidingObject.x + 32)
 			&& collidingObject.x <= (object.x + 32)
