@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 291
+$gameData.ver = 292
 
 //{ Init vars
 var $http = require("http");
@@ -118,7 +118,7 @@ function moveObject(object) {
 function gameTick() {
 	//Loop through game objects
 	for (object in $gameObjects.filter(o => {return o.hp <= 0})) {
-		if ($gameObjects[object].objectType == 'player') { //if player, respawn. 
+		if ($gameObjects[object].objecttype == 'player') { //if player, respawn. 
 			$gameObjects[object].locx = Math.round(Math.random() * map.x)
 			$gameObjects[object].locy = Math.round(Math.random() * map.y)
 			$gameObjects[object].hp = 100
@@ -137,19 +137,19 @@ function gameTick() {
 	}
 	
 	$gameObjects = $gameObjects.filter(o => {return o.hp > 0})
-	for (object in $gameObjects.filter(o => {return o.objectType != 'block'}).filter(o => {return o.objectType != 'player'})) { // Move non blocks and non players.
+	for (object in $gameObjects.filter(o => {return o.objecttype != 'block'}).filter(o => {return o.objecttype != 'player'})) { // Move non blocks and non players.
 		moveObject($gameObjects[object])
 	}
 
-	for (object in $gameObjects.filter(o => {return o.objectType == 'projectile'})) { // Move non blocks and non players.
+	for (object in $gameObjects.filter(o => {return o.objecttype == 'projectile'})) { // Move non blocks and non players.
 		$gameObjects[object].hp--
 	}
 
-	for (object in $gameObjects.filter(o => {return o.objectType == 'ammo'})) { // Move non blocks and non players.
+	for (object in $gameObjects.filter(o => {return o.objecttype == 'ammo'})) { // Move non blocks and non players.
 		$gameObjects[object].hp--
 	}
 
-	for (object in $gameObjects.filter(o => {return o.objectType == 'player'})) { // Move non blocks and non players.
+	for (object in $gameObjects.filter(o => {return o.objecttype == 'player'})) { // Move non blocks and non players.
 		$gameObjects[object].ticksremaining--
 	}
 
