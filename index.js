@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 308
+$gameData.ver = 309
 
 //{ Init vars
 var $http = require("http");
@@ -23,10 +23,10 @@ map.playerMoveSpeed = 320
 projectileSpeed = 3;
 
 //How fast the game should update.
-var $ticks = 10
-var $tickDelay = (1000/$ticks)
-var $saves = 60
-var $saveDelay = (1000*$saves)
+var $ticksPerSecond = 10
+var $tickDelay = (1000/$ticksPerSecond)
+var $minutesBetweenSaves = 5
+var $saveDelay = (60*1000*$minutesBetweenSaves)
 var then = Date.now();
 var $gameTick = 0;
 var $gameSave = 0;
@@ -116,7 +116,7 @@ function moveObject(object) {
 };
 
 function gameTick() {
-	//Loop through game objects
+	//Handle all with HP below zero
 	for (object in $gameObjects.filter(o => {return o.hp <= 0})) {
 		if ($gameObjects[object].objecttype == 'player') { //if player, respawn. 
 			$gameObjects[object].locx = Math.round(Math.random() * map.x)
@@ -136,20 +136,24 @@ function gameTick() {
 		}	
 	}
 	
+	//Snip all with HP below zero
 	$gameObjects = $gameObjects.filter(o => {return o.hp > 0})
+	
+	//Handle all with HP above zero
 	for (object in $gameObjects) {
-		if ($gameObjects[object].objectType == 'player' || $gameObjects[object].objecttype == 'player') { //if player 
+		if ($gameObjects[object].objectType == 'projectile' || $gameObjects[object].objecttype == 'projectile') { //if prjectile
+			$gameObjects[object].hp--
+			moveObject($gameObjects[object])
+		}else if ($gameObjects[object].objectType == 'player' || $gameObjects[object].objecttype == 'player') { //if player
 			$gameObjects[object].ticksremaining--
 		}else if ($gameObjects[object].objectType == 'npc' || $gameObjects[object].objecttype == 'npc') { //if demon 
-			moveObject($gameObjects[object])
-		}else if ($gameObjects[object].objectType == 'projectile' || $gameObjects[object].objecttype == 'projectile') { //if prjectile
-			$gameObjects[object].hp--
 			moveObject($gameObjects[object])
 		}else if ($gameObjects[object].objectType == 'ammo' || $gameObjects[object].objecttype == 'ammo') { //if projectile 
 			$gameObjects[object].hp--
 			moveObject($gameObjects[object])
 		}else if ($gameObjects[object].objectType == 'block' || $gameObjects[object].objecttype == 'block') { //if block
 		}else { //everyone else
+			writeLog("Unhandled object Type: "+$gameObjects[object].objectType+" and type:"+$gameObjects[object].objecttype)
 		}	
 	} // end for object
 
