@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 307
+$gameData.ver = 308
 
 //{ Init vars
 var $http = require("http");
@@ -26,7 +26,7 @@ projectileSpeed = 3;
 var $ticks = 10
 var $tickDelay = (1000/$ticks)
 var $saves = 60
-var $saveDelay = (1000*1000*$saves)
+var $saveDelay = (1000*$saves)
 var then = Date.now();
 var $gameTick = 0;
 var $gameSave = 0;
