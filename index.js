@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 286
+$gameData.ver = 287
 
 //{ Init vars
 var $http = require("http");
@@ -120,18 +120,19 @@ function gameTick() {
 	//Loop through game objects
 	for (object in $gameObjects.filter(o => {return o.hp <= 0})) {
 		if ($gameObjects[object].objectType == 'player') { //if player, respawn. 
-			$gameObjects[object].locx = Math.round(32 + (Math.random() * (map.x - 64)),4)
-			$gameObjects[object].locy = Math.round(32 + (Math.random() * (map.x - 64)),4)
+			$gameObjects[object].locx = Math.round(Math.random() * map.x)
+			$gameObjects[object].locy = Math.round(Math.random() * map.y)
 			$gameObjects[object].hp = 100
+			$gameObjects[object].ammo = 100
 			$gameObjects[object].score = 0
 			$gameObjects[object].ticksremaining = 100
 			$gameObjects[object].updatelocation = 1
 		}else if ($gameObjects[object].objectType == 'npc' || $gameObjects[object].objecttype == 'npc') { //if demon, spawn ammo.
-			addObject('ammodrop',map.name,$gameObjects[object].x,$gameObjects[object].y,1000,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,'ammodrop',1,'ammodrop');
+			addObject('ammodrop',map.name,$gameObjects[object].x,$gameObjects[object].y,1000,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),100,'ammodrop',1,'ammodrop');
 		}else if ($gameObjects[object].objectType == 'projectile' || $gameObjects[object].objecttype == 'projectile') { //if projectile 
 		}else if ($gameObjects[object].objectType == 'ammo' || $gameObjects[object].objecttype == 'ammo') { //if ammo 
 		}else if ($gameObjects[object].objectType == 'block' || $gameObjects[object].objecttype == 'block') { //if block, spawn ammo.
-			addObject('ammodrop',map.name,$gameObjects[object].x,$gameObjects[object].y,1000,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),100,'ammodrop',1,'ammodrop');
+			addObject('ammodrop',map.name,$gameObjects[object].x,$gameObjects[object].y,1000,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),100,'ammodrop',1,'ammodrop');
 		}else { //everyone else
 		}	
 	}
@@ -156,10 +157,10 @@ function gameTick() {
 
 	//Add random block and demon.
 	if (Math.floor(Math.random() *1000) > 990) {
-		addObject('block',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,0,0,100,'block',1,'block');
+		addObject('block',map.name,Math.round((Math.random() * 250))*40,Math.round((Math.random() * 250))*40,10,0,0,100,'block',1,'block');
 	}
 	if (Math.floor(Math.random() *1000) > 990) {
-		addObject('demon',map.name,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),10,Math.round(32 + (Math.random() * (map.x - 64)),4),Math.round(32 + (Math.random() * (map.x - 64)),4),1,'demon',1,'npc');
+		addObject('demon',map.name,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),10,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),1,'demon',1,'npc');
 	}
 };
 //}
