@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 309
+$gameData.ver = 346
 
 //{ Init vars
 var $http = require("http");
@@ -31,6 +31,8 @@ var then = Date.now();
 var $gameTick = 0;
 var $gameSave = 0;
 var $clickCheck = false;
+
+var hitBox = 32;
 
 //load $gameObjects var.
 var $gameObjects;
@@ -62,14 +64,7 @@ s3.getObject(getParams, function (err, data) {
 //{ functions
 function getBadPW() { return Math.random().toString(36).slice(-20).slice(2); };
 function writeLog($msg) { 
-	$msg = $msg.toString().replace(/'/g,"~~")
-	if($msg.length > 254) {
-	   $msg = $msg.substring(0, 251)+"...";
-	}
-	sparational.sequelize.query("INSERT INTO Logs (servicename, err) SELECT '"+$serviceName+"','"+$msg+"'").then(([$PagesResults, metadata]) => {
-	}).catch(function(err) {
-		console.log('writeLog Insert error: '+err.message); 
-	}) //	.then()
+		console.log('error: '+$msg); 
 };
 
 function addObject(objectname,mapname,locx,locy,hp,ammo,score,ticksremaining,objectowner,updatelocation,objecttype) {
@@ -77,7 +72,7 @@ function addObject(objectname,mapname,locx,locy,hp,ammo,score,ticksremaining,obj
 	$gameObjects.push({'objectname':objectname,'mapname':mapname,'locx':locx,'locy':locy,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectowner':objectowner,'updatelocation':1,'objecttype':objecttype})
 	
 	//If projectile, remove ammo from the owner.
-	if (objecttype = 'projectile') {
+	if (objecttype == 'projectile') {
 		var object = $gameObjects.filter(o => {return o.objectname == objectowner})[0]
 		object.ammo--
 	}
@@ -117,41 +112,133 @@ function moveObject(object) {
 
 function gameTick() {
 	//Handle all with HP below zero
-	for (object in $gameObjects.filter(o => {return o.hp <= 0})) {
-		if ($gameObjects[object].objecttype == 'player') { //if player, respawn. 
-			$gameObjects[object].locx = Math.round(Math.random() * map.x)
-			$gameObjects[object].locy = Math.round(Math.random() * map.y)
-			$gameObjects[object].hp = 100
-			$gameObjects[object].ammo = 100
-			$gameObjects[object].score = 0
-			$gameObjects[object].ticksremaining = 100
-			$gameObjects[object].updatelocation = 1
-		}else if ($gameObjects[object].objecttype == 'npc') { //if demon, spawn ammo.
-			addObject('ammodrop',map.name,$gameObjects[object].x,$gameObjects[object].y,1000,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),100,'ammodrop',1,'ammodrop');
-		}else if ($gameObjects[object].objecttype == 'projectile') { //if projectile 
-		}else if ($gameObjects[object].objecttype == 'ammo') { //if ammo 
-		}else if ($gameObjects[object].objecttype == 'block') { //if block, spawn ammo.
-			addObject('ammodrop',map.name,$gameObjects[object].x,$gameObjects[object].y,1000,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),100,'ammodrop',1,'ammodrop');
+	belowZeroHp = $gameObjects.filter(o => {return o.hp <= 0}) 
+	for (object in belowZeroHp) {
+		if (belowZeroHp[object].objecttype == 'player') { //if player, respawn. 
+			belowZeroHp[object].locx = Math.round(Math.random() * map.x)
+			belowZeroHp[object].locy = Math.round(Math.random() * map.y)
+			belowZeroHp[object].hp = 100
+			belowZeroHp[object].ammo = 100
+			belowZeroHp[object].score = 0
+			belowZeroHp[object].ticksremaining = 100
+			belowZeroHp[object].updatelocation = 1
+		}else if (belowZeroHp[object].objecttype == 'npc' && Math.floor(Math.random() *1000) > 750) { //if demon, spawn ammo.
+			if (Math.floor(Math.random() *1000) > 500) { //if demon, spawn ammo.
+				addObject('ammodrop',map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),100,'ammodrop',1,'ammodrop');
+			}else{
+				addObject('hpdrop',map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),100,'hpdrop',1,'hpdrop');
+			}
+		}else if (belowZeroHp[object].objecttype == 'projectile') { //if projectile 
+		}else if (belowZeroHp[object].objecttype == 'ammodrop') { //if ammo 
+		}else if (belowZeroHp[object].objecttype == 'hpdrop') { //if ammo 
+		}else if (belowZeroHp[object].objecttype == 'block' && Math.floor(Math.random() *1000) > 500) { //if block, spawn ammo.
+			if (Math.floor(Math.random() *1000) > 500) { //if demon, spawn ammo.
+				addObject('ammodrop',map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),100,'ammodrop',1,'ammodrop');
+			}else{
+				addObject('hpdrop',map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),100,'hpdrop',1,'hpdrop');
+			}
 		}else { //everyone else
 		}	
 	}
 	
 	//Snip all with HP below zero
-	$gameObjects = $gameObjects.filter(o => {return o.hp > 0})
+	$gameObjects = $gameObjects.filter(o => {return o.hp > 0}).filter(o => {return o.objecttype})
 	
-	//Handle all with HP above zero
 	for (object in $gameObjects) {
-		if ($gameObjects[object].objectType == 'projectile' || $gameObjects[object].objecttype == 'projectile') { //if prjectile
+	//Handle all with HP above zero
+		if ($gameObjects[object].objecttype == 'projectile') { //if prjectile
+			//If collides with:
+				var blockObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype == 'block'}) 
+				for (collidingObject in blockObjects){
+					try{blockObjects[collidingObject].hp--}catch(e){}
+					$gameObjects[object].hp = 0
+					blockObjects.filter(o => {return o.objectname == $gameObjects[object].objectowner}).score++
+					//console.log("Projectile Block collision "+$gameObjects[object].objectname+" at x:"+$gameObjects[object].locx+" y:"+$gameObjects[object].locy+"against "+blockObjects[collidingObject].objectname+" with HP "+blockObjects[collidingObject].hp+" at x:"+blockObjects[collidingObject].locx+" y:"+blockObjects[collidingObject].locy)
+				}
+				var npcObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype == 'npc'}) 
+				for (collidingObject in npcObjects){
+					npcObjects[collidingObject].hp--
+					$gameObjects[object].hp = 0
+					npcObjects.filter(o => {return o.objectname == $gameObjects[object].objectowner}).score++
+					//console.log("Projectile Demon collision "+$gameObjects[object].objectname+" at x:"+$gameObjects[object].locx+" y:"+$gameObjects[object].locy+"against "+npcObjects[collidingObject].objectname+" with HP "+npcObjects[collidingObject].hp+" at x:"+npcObjects[collidingObject].locx+" y:"+npcObjects[collidingObject].locy)
+				}
+				//player - deleted and player loses HP
+				//demon - deleted and demon loses HP
+				//block - deleted and block loses HP
 			$gameObjects[object].hp--
 			moveObject($gameObjects[object])
-		}else if ($gameObjects[object].objectType == 'player' || $gameObjects[object].objecttype == 'player') { //if player
+		}else if ($gameObjects[object].objecttype == 'player') { //if player
 			$gameObjects[object].ticksremaining--
-		}else if ($gameObjects[object].objectType == 'npc' || $gameObjects[object].objecttype == 'npc') { //if demon 
+			//If collides with:
+				var notBlockObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype != 'ammodrop'})
+				notBlockObjects = notBlockObjects.filter(o => {return o.objecttype != 'hpdrop'})
+				notBlockObjects = notBlockObjects.filter(o => {return o.objecttype != 'projectile'})
+				notBlockObjects = notBlockObjects.filter(o => {return o.objectname != $gameObjects[object].objectname})
+				for (collidingObject in notBlockObjects){
+					$gameObjects[object].hp--
+					notBlockObjects[collidingObject].hp--
+					if ($gameObjects[object].locx < notBlockObjects[collidingObject].locx) {notBlockObjects[collidingObject].locx += 25}
+					if ($gameObjects[object].locx > notBlockObjects[collidingObject].locx) {notBlockObjects[collidingObject].locx -= 25}
+					if ($gameObjects[object].locy < notBlockObjects[collidingObject].locy) {notBlockObjects[collidingObject].locy += 25}
+					if ($gameObjects[object].locy > notBlockObjects[collidingObject].locy) {notBlockObjects[collidingObject].locy -= 25}
+					console.log("Player collision "+$gameObjects[object].objectname+" against "+notBlockObjects[collidingObject].objectname)
+				}
+/*
+*/
+				//player - knockback and both lose HP
+				//demon - knockback and both lose HP
+				//block - knockback and both lose HP
+				
+				//projectile - loses HP and projectile deleted
+				
+				//ammo - gains ammo and ammo deleted
+				
+		}else if ($gameObjects[object].objecttype == 'npc') { //if demon 
+			//If collides with:
+				//block - knockback
 			moveObject($gameObjects[object])
-		}else if ($gameObjects[object].objectType == 'ammo' || $gameObjects[object].objecttype == 'ammo') { //if projectile 
+		}else if ($gameObjects[object].objectType == 'ammodrop' || $gameObjects[object].objecttype == 'ammodrop') { //if projectile 
+				var playerObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype == 'player'}) 
+				for (collidingObject in playerObjects){
+					playerObjects[collidingObject].ammo += 25
+					$gameObjects[object].hp = 0
+					//console.log("Ammo collision "+$gameObjects[object].objectname+" at x:"+$gameObjects[object].locx+" y:"+$gameObjects[object].locy+"against "+playerObjects[collidingObject].objectname+" with HP "+playerObjects[collidingObject].hp+" at x:"+playerObjects[collidingObject].locx+" y:"+playerObjects[collidingObject].locy)
+				}
+/*
+*/
+			//If collides with:
+				//block - knockback
 			$gameObjects[object].hp--
 			moveObject($gameObjects[object])
-		}else if ($gameObjects[object].objectType == 'block' || $gameObjects[object].objecttype == 'block') { //if block
+		}else if ($gameObjects[object].objectType == 'hpdrop' || $gameObjects[object].objecttype == 'hpdrop') { //if projectile 
+				var playerObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype == 'player'}) 
+				for (collidingObject in playerObjects){
+					playerObjects[collidingObject].hp += 25
+					$gameObjects[object].hp = 0
+					//console.log("Ammo collision "+$gameObjects[object].objectname+" at x:"+$gameObjects[object].locx+" y:"+$gameObjects[object].locy+"against "+playerObjects[collidingObject].objectname+" with HP "+playerObjects[collidingObject].hp+" at x:"+playerObjects[collidingObject].locx+" y:"+playerObjects[collidingObject].locy)
+				}
+/*
+*/
+			//If collides with:
+				//block - knockback
+			$gameObjects[object].hp--
+			moveObject($gameObjects[object])
+		}else if ($gameObjects[object].objecttype == 'block') { //if block
+/*
+				var blockObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype == 'player'}) 
+				for (collidingObject in blockObjects){
+					blockObjects[collidingObject].x += 25
+					blockObjects[collidingObject].y += 25
+					console.log("Block collision "+blockObjects[object].objectname+" against "+blockObjects[collidingObject].objectname+" with HP "+blockObjects[collidingObject].hp)
+				}
+*/
+/*
+*/
+			//If collides with:
+				//player - knockback and both lose HP
+				//demon - knockback and both lose HP
+				//projectile - loses HP and projectile deleted
+				//ammo - knockback
 		}else { //everyone else
 			writeLog("Unhandled object Type: "+$gameObjects[object].objectType+" and type:"+$gameObjects[object].objecttype)
 		}	
@@ -163,7 +250,7 @@ function gameTick() {
 		addObject('block',map.name,Math.round((Math.random() * 250))*40,Math.round((Math.random() * 250))*40,10,0,0,100,'block',1,'block');
 	}
 	if (Math.floor(Math.random() *1000) > 990) {
-		addObject('demon',map.name,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),10,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),1,'demon',1,'npc');
+		addObject(getBadPW(),map.name,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),10,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),1,'demon',1,'npc');
 	}
 };
 //}
@@ -221,6 +308,7 @@ if (request.method == "GET") {
 
 			//Update player location, if it's not too far away.
 		var object = $gameObjects.filter(o => {return o.objectname == $user})[0]
+		object.ticksremaining = 100;
 		if (player.x <= (object.locx + map.playerMoveSpeed)
 		&& object.locx <= (player.x + map.playerMoveSpeed)
 		&& player.y <= (object.locy + map.playerMoveSpeed)
@@ -231,14 +319,14 @@ if (request.method == "GET") {
 			console.log("Player at x:"+player.x+" y:"+player.y+" but server has x:"+object.locx+" y:"+object.locy)
 			
 		}
-
+	
 	if (player.mouseClicked == true && $clickCheck == false){
 		$clickCheck = true
 		addObject('projectile',map.name,player.x,player.y,100,player.mouseX,player.mouseY,100,$user,1,'projectile');
 	}else if (player.mouseClicked == false && $clickCheck == true){
 		$clickCheck = false
 	}
-	$returnGameObjects = $gameObjects.filter(o => {return o.locx > player.x-2000}).filter(o => {return o.locx < player.x+2000}).filter(o => {return o.locy > player.y-2000}).filter(o => {return o.locy < player.y+2000})
+	$returnGameObjects = $gameObjects.filter(o => {return o.locx > player.x-2000}).filter(o => {return o.locx < player.x+2000}).filter(o => {return o.locy > player.y-2000}).filter(o => {return o.locy < player.y+2000}).filter(o => {return o.ticksremaining >= 0})
 	$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'player'}))
 	$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'npc'}))
 	
