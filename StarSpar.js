@@ -9,8 +9,6 @@ var sparational = require("sparational");
 var $serviceName = "StarSpar";
 var $servicePort = (process.env.PORT || 5010);
 var $hostName = (process.env.HOST || "localhost:"+$servicePort);
-sparational.starspar = new sparational.Sequelize(process.env.STARSPAR_DATABASE_URL || 'postgres://postgres:dbpasswd@127.0.0.1:5432/postgres', {logging: false});
-sparational.sequelize = new sparational.Sequelize(process.env.LOGGING_DATABASE_URL || 'postgres://postgres:dbpasswd@127.0.0.1:5432/postgres', {logging: false});
 
 $gameData.map = {}
 $gameData.map.x = 10000
