@@ -175,35 +175,57 @@ function gameTick() {
 			//Keep them from getting too much HP or ammo.
 			
 			//If collides with:
-				var notBlockObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype != 'ammodrop'})
-				notBlockObjects = notBlockObjects.filter(o => {return o.objecttype != 'hpdrop'})
-				notBlockObjects = notBlockObjects.filter(o => {return o.objecttype != 'projectile'})
-				notBlockObjects = notBlockObjects.filter(o => {return o.objectname != $gameObjects[object].objectname})
-				for (collidingObject in notBlockObjects){
-					$gameObjects[object].hp--
-					notBlockObjects[collidingObject].hp--
-					if ($gameObjects[object].locx < notBlockObjects[collidingObject].locx) {notBlockObjects[collidingObject].locx += 25}
-					if ($gameObjects[object].locx > notBlockObjects[collidingObject].locx) {notBlockObjects[collidingObject].locx -= 25}
-					if ($gameObjects[object].locy < notBlockObjects[collidingObject].locy) {notBlockObjects[collidingObject].locy += 25}
-					if ($gameObjects[object].locy > notBlockObjects[collidingObject].locy) {notBlockObjects[collidingObject].locy -= 25}
-					console.log("Player collision "+$gameObjects[object].objectname+" against "+notBlockObjects[collidingObject].objectname)
-				}
+			var notBlockObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype != 'block'})
+			notBlockObjects = notBlockObjects.filter(o => {return o.objecttype != 'hpdrop'}).filter(o => {return o.objecttype != 'projectile'}).filter(o => {return o.objecttype != 'ammodrop'})
 			//not colliding with itself
+			notBlockObjects = notBlockObjects.filter(o => {return o.objectname != $gameObjects[object].objectname})
 			//collide with demons and players - knock them back.
+			for (collidingObject in notBlockObjects){
+				$gameObjects[object].hp--
+				notBlockObjects[collidingObject].hp--
+				if ($gameObjects[object].locx < notBlockObjects[collidingObject].locx) {notBlockObjects[collidingObject].locx += 25}
+				if ($gameObjects[object].locx > notBlockObjects[collidingObject].locx) {notBlockObjects[collidingObject].locx -= 25}
+				if ($gameObjects[object].locy < notBlockObjects[collidingObject].locy) {notBlockObjects[collidingObject].locy += 25}
+				if ($gameObjects[object].locy > notBlockObjects[collidingObject].locy) {notBlockObjects[collidingObject].locy -= 25}
+			}
 			//Collide with blocks, get knocked back.
+			var blockObjects2 = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype == 'block'})
+			for (collidingObject in blockObjects2){
+				$gameObjects[object].hp--
+				blockObjects2[collidingObject].hp--
+				if ($gameObjects[object].locx < blockObjects2[collidingObject].locx) {$gameObjects[object].locx -= 25}
+				if ($gameObjects[object].locx > blockObjects2[collidingObject].locx) {$gameObjects[object].locx += 25}
+				if ($gameObjects[object].locy < blockObjects2[collidingObject].locy) {$gameObjects[object].locy -= 25}
+				if ($gameObjects[object].locy > blockObjects2[collidingObject].locy) {$gameObjects[object].locy += 25}
+			}
 			
 			
 		}else if ($gameObjects[object].objecttype == 'npc') { //if demon 
+			//if ($gameObjects[object].objectname == 'demon') {$gameObjects[object].objectname = getBadPW()}
+			//If near target, find a new one.
+			if ($gameObjects[object].locx < $gameObjects[object].ammo+5
+			&& $gameObjects[object].locx +5 > $gameObjects[object].ammo) {$gameObjects[object].ammo = Math.round(Math.random() * $gameData.map.x)}
+			if ($gameObjects[object].locy < $gameObjects[object].score+5
+			&& $gameObjects[object].locy +5 > $gameObjects[object].score) {$gameObjects[object].score = Math.round(Math.random() * $gameData.map.y)}
 			moveObject($gameObjects[object])
-		}else if ($gameObjects[object].objectType == 'ammodrop' || $gameObjects[object].objecttype == 'ammodrop') { //if projectile 
+
+			//Collide with blocks, mirror target.
+			var blockObjectsNPC = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype == 'block'})
+			for (collidingObject in blockObjectsNPC){
+				$gameObjects[object].hp--
+				blockObjectsNPC[collidingObject].hp--
+				$gameObjects[object].ammo = $gameObjects[object].locx-($gameObjects[object].ammo-$gameObjects[object].locx)
 				//if demon's left of block, then it's moving right, so set ammo = demon.x-(ammo-demon.x)
 				//demon 3800 ammo 4200 = 3800-(4200-3800) = 3400
 				//if demon's right of block, then it's moving left, so set ammo = demon.x-(ammo-demon.x)
 				//demon 4200 ammo 3800 = 4200-(3800-4200) = 4800
+				$gameObjects[object].score = $gameObjects[object].locy-($gameObjects[object].score-$gameObjects[object].locy)
 				//demon 3800 score 4200 = 3400
 				//demon 4200 score 3800 = 4800
+			}
 			
 			
+		}else if ($gameObjects[object].objectType == 'ammodrop' || $gameObjects[object].objecttype == 'ammodrop') { //if ammodrop 
 				var playerObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype == 'player'}) 
 				for (collidingObject in playerObjects){
 					playerObjects[collidingObject].ammo += 25
