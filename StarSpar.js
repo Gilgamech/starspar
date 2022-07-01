@@ -65,7 +65,11 @@ s3.getObject(getParams, function (err, data) {
         console.log("gameObjects err: "+err);
     } else {
 		$gameObjects = JSON.parse(data.Body)
+		for (object in $gameObjects) {
+			$gameObjects[object].id = object;
+		}// reindex input.
 		//Filter out misplaced blocks.
+		$gameObjects = $gameObjects.filter(o => {return o.objecttype == "block"}).filter(o => {return o.locx % 40 == 0}).filter(o => {return o.locy % 40 == 0})
 		console.log('Reindexing complete - indexed '+$gameObjects.length+' game objects');
         console.log("gameObjects test data: "+JSON.stringify($gameObjects[0])); //this will log data to console
     }
