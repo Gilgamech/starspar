@@ -326,12 +326,16 @@ if (request.method == "GET") {
 	}
 	then = now;
 
-	if($gameObjects.filter(o => {return o.objectname == player.objectname}).length <=0){
+	if($gameObjects.filter(o => {return o.objectname == $user}).length <=0){
 		//If the player isn't in the gameObjects list, add them.
+		console.log("Add Player "+$user)
+		addObject($user,$gameData.map.name,Math.round(Math.random() * $gameData.map.x),Math.round(Math.random() * $gameData.map.x),100,100,0,100,$user,1,'player')
 	}
 	
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
 		//If the player doesn't know their location, throw them randomly on the map somewhere.
+		player.x = Math.round(Math.random() * $gameData.map.x)
+		player.y = Math.round(Math.random() * $gameData.map.y)
 		//Send back all player locations, so they can find themselves if they're in the list.
 		$returnGameObjects = $gameObjects.filter(o => {return o.objecttype == 'player'})
 	} else {//if player.x and player.y are known
