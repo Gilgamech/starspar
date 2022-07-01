@@ -278,10 +278,10 @@ function gameTick() {
 
 			
 	//Add random block and demon.
-	if (Math.floor(Math.random() *1000) > 990) {
+	if (Math.floor(Math.random() *100) > (1-$gameData.map.drop.block.spawnrate)) {
 		addObject('block',$gameData.map.name,Math.round((Math.random() * 250))*40,Math.round((Math.random() * 250))*40,$gameData.map.drop.block.hp,0,0,100,'block',1,'block');
 	}
-	if (Math.floor(Math.random() *1000) > 990) {
+	if (Math.floor(Math.random() *100) > (1-$gameData.map.npc.demon.spawnrate)) {
 		addObject(getBadPW(),$gameData.map.name,Math.round(Math.random() * $gameData.map.x),Math.round(Math.random() * $gameData.map.y),$gameData.map.npc.demon.hp,Math.round(Math.random() * $gameData.map.x),Math.round(Math.random() * $gameData.map.y),1,'demon',1,'npc');
 	}
 };
