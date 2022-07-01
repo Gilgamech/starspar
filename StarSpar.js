@@ -132,17 +132,14 @@ function gameTick() {
 			belowZeroHp[object].score = 0
 			belowZeroHp[object].ticksremaining = 100
 			belowZeroHp[object].updatelocation = 1
-		}else if (belowZeroHp[object].objecttype == 'npc' && Math.floor(Math.random() *1000) > 750) { //if demon, spawn ammo.
-			if (Math.floor(Math.random() *1000) > 500) { //if demon, spawn ammo.
+		}else if (belowZeroHp[object].objecttype == 'npc' && Math.floor(Math.random() *1000) > 250) { //Overall drop rate
+			if (Math.floor(Math.random() *1000) > 750) { //Weighted to drop hp
 				addObject('ammodrop',$gameData.map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * $gameData.map.x),Math.round(Math.random() * $gameData.map.y),100,'ammodrop',1,'ammodrop');
 			}else{
 				addObject('hpdrop',$gameData.map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * $gameData.map.x),Math.round(Math.random() * $gameData.map.y),100,'hpdrop',1,'hpdrop');
 			}
-		}else if (belowZeroHp[object].objecttype == 'projectile') { //if projectile 
-		}else if (belowZeroHp[object].objecttype == 'ammodrop') { //if ammo 
-		}else if (belowZeroHp[object].objecttype == 'hpdrop') { //if ammo 
-		}else if (belowZeroHp[object].objecttype == 'block' && Math.floor(Math.random() *1000) > 500) { //if block, spawn ammo.
-			if (Math.floor(Math.random() *1000) > 500) { //if demon, spawn ammo.
+		}else if (belowZeroHp[object].objecttype == 'block' && Math.floor(Math.random() *1000) > 250) { //Overall drop rate
+			if (Math.floor(Math.random() *1000) > 250) { //Weighted to drop ammo
 				addObject('ammodrop',$gameData.map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * $gameData.map.x),Math.round(Math.random() * $gameData.map.y),100,'ammodrop',1,'ammodrop');
 			}else{
 				addObject('hpdrop',$gameData.map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * $gameData.map.x),Math.round(Math.random() * $gameData.map.y),100,'hpdrop',1,'hpdrop');
