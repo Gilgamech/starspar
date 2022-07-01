@@ -125,8 +125,8 @@ function gameTick() {
 	belowZeroHp = $gameObjects.filter(o => {return o.hp <= 0}) 
 	for (object in belowZeroHp) {
 		if (belowZeroHp[object].objecttype == 'player') { //if player, respawn. 
-			belowZeroHp[object].locx = Math.round(Math.random() * map.x)
-			belowZeroHp[object].locy = Math.round(Math.random() * map.y)
+			belowZeroHp[object].locx = Math.round(Math.random() * $gameData.map.x)
+			belowZeroHp[object].locy = Math.round(Math.random() * $gameData.map.y)
 			belowZeroHp[object].hp = 100
 			belowZeroHp[object].ammo = 100
 			belowZeroHp[object].score = 0
@@ -134,18 +134,18 @@ function gameTick() {
 			belowZeroHp[object].updatelocation = 1
 		}else if (belowZeroHp[object].objecttype == 'npc' && Math.floor(Math.random() *1000) > 750) { //if demon, spawn ammo.
 			if (Math.floor(Math.random() *1000) > 500) { //if demon, spawn ammo.
-				addObject('ammodrop',map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),100,'ammodrop',1,'ammodrop');
+				addObject('ammodrop',$gameData.map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * $gameData.map.x),Math.round(Math.random() * $gameData.map.y),100,'ammodrop',1,'ammodrop');
 			}else{
-				addObject('hpdrop',map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),100,'hpdrop',1,'hpdrop');
+				addObject('hpdrop',$gameData.map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * $gameData.map.x),Math.round(Math.random() * $gameData.map.y),100,'hpdrop',1,'hpdrop');
 			}
 		}else if (belowZeroHp[object].objecttype == 'projectile') { //if projectile 
 		}else if (belowZeroHp[object].objecttype == 'ammodrop') { //if ammo 
 		}else if (belowZeroHp[object].objecttype == 'hpdrop') { //if ammo 
 		}else if (belowZeroHp[object].objecttype == 'block' && Math.floor(Math.random() *1000) > 500) { //if block, spawn ammo.
 			if (Math.floor(Math.random() *1000) > 500) { //if demon, spawn ammo.
-				addObject('ammodrop',map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),100,'ammodrop',1,'ammodrop');
+				addObject('ammodrop',$gameData.map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * $gameData.map.x),Math.round(Math.random() * $gameData.map.y),100,'ammodrop',1,'ammodrop');
 			}else{
-				addObject('hpdrop',map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),100,'hpdrop',1,'hpdrop');
+				addObject('hpdrop',$gameData.map.name,belowZeroHp[object].locx,belowZeroHp[object].locy,1000,Math.round(Math.random() * $gameData.map.x),Math.round(Math.random() * $gameData.map.y),100,'hpdrop',1,'hpdrop');
 			}
 		}else { //everyone else
 		}	
@@ -214,9 +214,9 @@ function gameTick() {
 				}
 			$gameObjects[object].hp--
 			moveObject($gameObjects[object])
-		}else if ($gameObjects[object].objectType == 'hpdrop' || $gameObjects[object].objecttype == 'hpdrop') { //if projectile 
 			
 			
+		}else if ($gameObjects[object].objectType == 'hpdrop' || $gameObjects[object].objecttype == 'hpdrop') { //if hpdrop 
 				var playerObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype == 'player'}) 
 				for (collidingObject in playerObjects){
 					playerObjects[collidingObject].hp += 25
@@ -233,10 +233,10 @@ function gameTick() {
 			
 	//Add random block and demon.
 	if (Math.floor(Math.random() *1000) > 990) {
-		addObject('block',map.name,Math.round((Math.random() * 250))*40,Math.round((Math.random() * 250))*40,10,0,0,100,'block',1,'block');
+		addObject('block',$gameData.map.name,Math.round((Math.random() * 250))*40,Math.round((Math.random() * 250))*40,$gameData.map.drop.block.hp,0,0,100,'block',1,'block');
 	}
 	if (Math.floor(Math.random() *1000) > 990) {
-		addObject(getBadPW(),map.name,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),10,Math.round(Math.random() * map.x),Math.round(Math.random() * map.y),1,'demon',1,'npc');
+		addObject(getBadPW(),$gameData.map.name,Math.round(Math.random() * $gameData.map.x),Math.round(Math.random() * $gameData.map.y),$gameData.map.npc.demon.hp,Math.round(Math.random() * $gameData.map.x),Math.round(Math.random() * $gameData.map.y),1,'demon',1,'npc');
 	}
 };
 //}
