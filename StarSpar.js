@@ -84,9 +84,12 @@ function writeLog($msg) {
 function addObject(objectname,mapname,locx,locy,hp,ammo,score,ticksremaining,objectowner,updatelocation,objecttype) {
 	$gameObjects.push({'objectname':objectname,'mapname':mapname,'locx':locx,'locy':locy,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectowner':objectowner,'updatelocation':1,'objecttype':objecttype})
 	if (objecttype == 'projectile') {
-		var object = $gameObjects.filter(o => {return o.objectname == objectowner})[0]
-		object.ammo--
+		var shooter = $gameObjects.filter(o => {return o.objectname == objectowner})[0]
+		if (shooter.ammo > 0) {
 		//If projectile, remove ammo from the owner.
+			shooter.ammo--
+			$gameObjects.push({'id':id,'objectname':objectname,'mapname':mapname,'locx':locx,'locy':locy,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectowner':objectowner,'updatelocation':1,'objecttype':objecttype})
+		}
 	//Spawn the object
 	}
 };
@@ -109,14 +112,28 @@ function gameSave() {
 };
 
 function moveObject(object) {
-	if (object.locx < object.ammo) { 
+	object.updatelocation = 1;
+	if (object.locx < object.ammo) {
 		if (object.locx > object.ammo-$gameData.map.projectile.move) {
+			object.ammo = object.locx;
+		}
+		object.locx = object.locx + $gameData.map.projectile.move
 	} else if (object.locx > object.ammo) { 
+		if (object.locx < object.ammo+$gameData.map.projectile.move) {
+			object.ammo = object.locx;
+		}
+		object.locx = object.locx - $gameData.map.projectile.move
 	} 
 	if (object.locy < object.score) { 
-		object.locy = object.locy + projectileSpeed
+		if (object.locy > object.score-$gameData.map.projectile.move) {
+			object.score = object.locy;
+		}
+		object.locy = object.locy + $gameData.map.projectile.move
 	} else if (object.locy > object.score) { 
-		object.locy = object.locy - projectileSpeed
+		if (object.locy < object.score+$gameData.map.projectile.move) {
+			object.score = object.locy;
+		}
+		object.locy = object.locy - $gameData.map.projectile.move
 	} 
 };
 
@@ -318,7 +335,12 @@ if (request.method == "GET") {
 		if (player.y >= $gameData.map.y){player.y = $gameData.map.y}
 
 		//Add projectiles if  mouse clicked.
+		if (player.mouseClicked == true && $clickCheck == false){
+			$clickCheck = true
+			addObject('projectile',$gameData.map.name,player.x+20,player.y+20,100,player.mouseX,player.mouseY,100,$user,1,'projectile');
+		}else if (player.mouseClicked == false && $clickCheck == true){
 			//clickCheck prevents click-holding and reliably ensures one-projectile-per-click.
+			$clickCheck = false
 		}//end clickCheck
 		
 		var object = $gameObjects.filter(o => {return o.objectname == $user})[0]
@@ -352,12 +374,6 @@ if (request.method == "GET") {
 		//Push active players onto whatever we're returning.
 		}
 	
-	if (player.mouseClicked == true && $clickCheck == false){
-		$clickCheck = true
-		addObject('projectile',map.name,player.x,player.y,100,player.mouseX,player.mouseY,100,$user,1,'projectile');
-	}else if (player.mouseClicked == false && $clickCheck == true){
-		$clickCheck = false
-	}
 	$returnGameObjects = $gameObjects.filter(o => {return o.locx > player.x-2000}).filter(o => {return o.locx < player.x+2000}).filter(o => {return o.locy > player.y-2000}).filter(o => {return o.locy < player.y+2000}).filter(o => {return o.ticksremaining >= 0})
 	$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'player'}))
 	$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'npc'}))
