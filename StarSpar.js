@@ -362,30 +362,51 @@ if (request.method == "GET") {
 		&& object.locy <= (player.y + $gameData.map.player.move)) {
 			object.locx = player.x;
 			object.locy = player.y;
+			object.updatelocation = player.updatelocation;
 		} else {
-			console.log("Player at x:"+player.x+" y:"+player.y+" but server has x:"+object.locx+" y:"+object.locy)
-			
+			object.updatelocation = 1
+		}//end update player location.
 		
 		//Describe player's newWindow on the map as centered on their player location.
+		var newWin = {};
 		//newWindow's upper left corner (minimum) is the player location minus half the newWindow size.
+		newWin.minX = player.x - player.winX/2
+		newWin.minY = player.y - player.winY/2
 		//newWindow's lower right corner (maximum) is the player location plus half the newWindow size.
-		//Describe player's oldWindow on the map as centered on their player location.
-		//oldWindow's upper left corner (minimum) is the object location minus half the oldWindow size.
-		//oldWindow's lower right corner (maximum) is the object location plus half the oldWindow size.
+		newWin.maxX = player.x + player.winX/2
+		newWin.maxY = player.y + player.winY/2
 		
+		//Describe player's oldWindow on the map as centered on their player location.
+		var oldWin = {};
+		//oldWindow's upper left corner (minimum) is the object location minus half the oldWindow size.
+		oldWin.minX = object.locX - object.winX/2
+		oldWin.minY = object.locY - object.winY/2
+		//oldWindow's lower right corner (maximum) is the object location plus half the oldWindow size.
+		oldWin.maxX = object.locX + object.winX/2
+		oldWin.maxY = object.locY + object.winY/2
+		
+		var $returnGameObjects
 		//Send back everything except players inside the player's newWindow...
+		$newWinObjects = $gameObjects.filter(o => {return o.locx > newWin.minX}).filter(o => {return o.locx < newWin.maxX}).filter(o => {return o.locy > newWin.minY}).filter(o => {return o.locy < newWin.maxY}).filter(o => {return o.objecttype != 'player'})
 		
 		//that was outside of the oldWindow
+		$returnGameObjects = $newWinObjects//.filter(o => {return o.locx < oldWin.minX}).filter(o => {return o.locx > oldWin.maxX}).filter(o => {return o.locy < oldWin.minY}).filter(o => {return o.locy < oldWin.maxY})
 		
 		//- unless it has updatelocation  == 1
+		var upLocObjects = $newWinObjects.filter(o => {return o.updatelocation  == 1})
+		for (object in upLocObjects){
+			$returnGameObjects.push({ 'objectname':upLocObjects[object].objectname, 'mapname':upLocObjects[object].mapname, 'locx':upLocObjects[object].locx, 'locy':upLocObjects[object].locy, 'hp':upLocObjects[object].hp, 'ammo':upLocObjects[object].ammo, 'score':upLocObjects[object].score, 'ticksremaining':upLocObjects[object].ticksremaining, 'objectowner':upLocObjects[object].objectowner, 'updatelocation':upLocObjects[object].updatelocation, 'objecttype':upLocObjects[object].objecttype })
+ 		}
 		
 		//Push active players onto whatever we're returning.
+		var playerRow = $gameObjects.filter(o => {return o.objecttype == 'player'}).filter(o => {return o.ticksremaining > 0}).filter(o => {return o.objectname != $user})
+			for (playerObject in playerRow){
+			$returnGameObjects.push({'objectname':playerRow[playerObject].objectname,'mapname':playerRow[playerObject].mapname,'locx':playerRow[playerObject].locx,'locy':playerRow[playerObject].locy,'hp':playerRow[playerObject].hp,'ammo':playerRow[playerObject].ammo,'score':playerRow[playerObject].score,'ticksremaining':playerRow[playerObject].ticksremaining,'objectowner':playerRow[playerObject].objectowner,'updatelocation':playerRow[playerObject].updatelocation,'objecttype':playerRow[playerObject].objecttype})
 		}
 	
-	$returnGameObjects = $gameObjects.filter(o => {return o.locx > player.x-2000}).filter(o => {return o.locx < player.x+2000}).filter(o => {return o.locy > player.y-2000}).filter(o => {return o.locy < player.y+2000}).filter(o => {return o.ticksremaining >= 0})
-	$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'player'}))
-	$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'npc'}))
 		//Push current player
+		var currentPlayer = $gameObjects.filter(o => {return o.objectname == $user})[0]
+		$returnGameObjects.push({'objectname':currentPlayer.objectname,'mapname':currentPlayer.mapname,'locx':currentPlayer.locx,'locy':currentPlayer.locy,'hp':currentPlayer.hp,'ammo':currentPlayer.ammo,'score':currentPlayer.score,'ticksremaining':currentPlayer.ticksremaining,'objectowner':currentPlayer.objectowner,'updatelocation':currentPlayer.updatelocation,'objecttype':currentPlayer.objecttype})
 		
 	} // end if player.x and player.y
 	
@@ -410,6 +431,7 @@ if (request.method == "GET") {
 //}
 
 //{ Run Once
+
 console.log($serviceName + ' version '+$gameData.ver+' is running on port ' + $servicePort);
 
 process.on('SIGTERM', function () {
