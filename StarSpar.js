@@ -53,6 +53,7 @@ var awsRegion = (process.env.AWS_S3_REGION || 'us-west-2')
 AWS.config.update({ accessKeyId: awsAccessKey, secretAccessKey: awsSecretKey, region: awsRegion});
 var s3 = new AWS.S3();
 
+//load map
 var BUCKET_NAME = 'gilpublic'
 var file = 'starspar/gamesave.json'
 var getParams = {
@@ -64,9 +65,14 @@ s3.getObject(getParams, function (err, data) {
         console.log("gameObjects err: "+err);
     } else {
 		$gameObjects = JSON.parse(data.Body)
+		//Filter out misplaced blocks.
+		console.log('Reindexing complete - indexed '+$gameObjects.length+' game objects');
         console.log("gameObjects test data: "+JSON.stringify($gameObjects[0])); //this will log data to console
     }
 })
+
+//load IP autoblock
+//var autoblock = sequelize select * from autoblock
 //}
 
 //{ functions
@@ -76,19 +82,16 @@ function writeLog($msg) {
 };
 
 function addObject(objectname,mapname,locx,locy,hp,ammo,score,ticksremaining,objectowner,updatelocation,objecttype) {
-	//Spawn the object
 	$gameObjects.push({'objectname':objectname,'mapname':mapname,'locx':locx,'locy':locy,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectowner':objectowner,'updatelocation':1,'objecttype':objecttype})
-	
-	//If projectile, remove ammo from the owner.
 	if (objecttype == 'projectile') {
 		var object = $gameObjects.filter(o => {return o.objectname == objectowner})[0]
 		object.ammo--
+		//If projectile, remove ammo from the owner.
+	//Spawn the object
 	}
-
 };
 
 function gameSave() { 
-	//var $saveObjects = $gameObjects.filter(o => {return o.updatelocation == 1}).filter(o => {return o.objectname != "ammodrop"})
 	var putParams = {
 		Bucket: BUCKET_NAME,
 		Key: file,
@@ -153,29 +156,27 @@ function gameTick() {
 	
 	for (object in $gameObjects) {
 	//Handle all with HP above zero
-		if ($gameObjects[object].objecttype == 'projectile') { //if prjectile
+		if ($gameObjects[object].objecttype == 'projectile') { //if projectile
 			//If collides with:
 				var blockObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype == 'block'}) 
 				for (collidingObject in blockObjects){
 					try{blockObjects[collidingObject].hp--}catch(e){}
 					$gameObjects[object].hp = 0
 					blockObjects.filter(o => {return o.objectname == $gameObjects[object].objectowner}).score++
-					//console.log("Projectile Block collision "+$gameObjects[object].objectname+" at x:"+$gameObjects[object].locx+" y:"+$gameObjects[object].locy+"against "+blockObjects[collidingObject].objectname+" with HP "+blockObjects[collidingObject].hp+" at x:"+blockObjects[collidingObject].locx+" y:"+blockObjects[collidingObject].locy)
 				}
 				var npcObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype == 'npc'}) 
 				for (collidingObject in npcObjects){
 					npcObjects[collidingObject].hp--
 					$gameObjects[object].hp = 0
 					npcObjects.filter(o => {return o.objectname == $gameObjects[object].objectowner}).score++
-					//console.log("Projectile Demon collision "+$gameObjects[object].objectname+" at x:"+$gameObjects[object].locx+" y:"+$gameObjects[object].locy+"against "+npcObjects[collidingObject].objectname+" with HP "+npcObjects[collidingObject].hp+" at x:"+npcObjects[collidingObject].locx+" y:"+npcObjects[collidingObject].locy)
 				}
-				//player - deleted and player loses HP
-				//demon - deleted and demon loses HP
-				//block - deleted and block loses HP
+
 			$gameObjects[object].hp--
 			moveObject($gameObjects[object])
 		}else if ($gameObjects[object].objecttype == 'player') { //if player
 			$gameObjects[object].ticksremaining--
+			//Keep them from getting too much HP or ammo.
+			
 			//If collides with:
 				var notBlockObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype != 'ammodrop'})
 				notBlockObjects = notBlockObjects.filter(o => {return o.objecttype != 'hpdrop'})
@@ -190,62 +191,40 @@ function gameTick() {
 					if ($gameObjects[object].locy > notBlockObjects[collidingObject].locy) {notBlockObjects[collidingObject].locy -= 25}
 					console.log("Player collision "+$gameObjects[object].objectname+" against "+notBlockObjects[collidingObject].objectname)
 				}
-/*
-*/
-				//player - knockback and both lose HP
-				//demon - knockback and both lose HP
-				//block - knockback and both lose HP
-				
-				//projectile - loses HP and projectile deleted
-				
-				//ammo - gains ammo and ammo deleted
-				
+			//not colliding with itself
+			//collide with demons and players - knock them back.
+			//Collide with blocks, get knocked back.
+			
+			
 		}else if ($gameObjects[object].objecttype == 'npc') { //if demon 
-			//If collides with:
-				//block - knockback
 			moveObject($gameObjects[object])
 		}else if ($gameObjects[object].objectType == 'ammodrop' || $gameObjects[object].objecttype == 'ammodrop') { //if projectile 
+				//if demon's left of block, then it's moving right, so set ammo = demon.x-(ammo-demon.x)
+				//demon 3800 ammo 4200 = 3800-(4200-3800) = 3400
+				//if demon's right of block, then it's moving left, so set ammo = demon.x-(ammo-demon.x)
+				//demon 4200 ammo 3800 = 4200-(3800-4200) = 4800
+				//demon 3800 score 4200 = 3400
+				//demon 4200 score 3800 = 4800
+			
+			
 				var playerObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype == 'player'}) 
 				for (collidingObject in playerObjects){
 					playerObjects[collidingObject].ammo += 25
 					$gameObjects[object].hp = 0
-					//console.log("Ammo collision "+$gameObjects[object].objectname+" at x:"+$gameObjects[object].locx+" y:"+$gameObjects[object].locy+"against "+playerObjects[collidingObject].objectname+" with HP "+playerObjects[collidingObject].hp+" at x:"+playerObjects[collidingObject].locx+" y:"+playerObjects[collidingObject].locy)
 				}
-/*
-*/
-			//If collides with:
-				//block - knockback
 			$gameObjects[object].hp--
 			moveObject($gameObjects[object])
 		}else if ($gameObjects[object].objectType == 'hpdrop' || $gameObjects[object].objecttype == 'hpdrop') { //if projectile 
+			
+			
 				var playerObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype == 'player'}) 
 				for (collidingObject in playerObjects){
 					playerObjects[collidingObject].hp += 25
 					$gameObjects[object].hp = 0
-					//console.log("Ammo collision "+$gameObjects[object].objectname+" at x:"+$gameObjects[object].locx+" y:"+$gameObjects[object].locy+"against "+playerObjects[collidingObject].objectname+" with HP "+playerObjects[collidingObject].hp+" at x:"+playerObjects[collidingObject].locx+" y:"+playerObjects[collidingObject].locy)
 				}
-/*
-*/
-			//If collides with:
-				//block - knockback
 			$gameObjects[object].hp--
 			moveObject($gameObjects[object])
 		}else if ($gameObjects[object].objecttype == 'block') { //if block
-/*
-				var blockObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype == 'player'}) 
-				for (collidingObject in blockObjects){
-					blockObjects[collidingObject].x += 25
-					blockObjects[collidingObject].y += 25
-					console.log("Block collision "+blockObjects[object].objectname+" against "+blockObjects[collidingObject].objectname+" with HP "+blockObjects[collidingObject].hp)
-				}
-*/
-/*
-*/
-			//If collides with:
-				//player - knockback and both lose HP
-				//demon - knockback and both lose HP
-				//projectile - loses HP and projectile deleted
-				//ammo - knockback
 		}else { //everyone else
 			writeLog("Unhandled object Type: "+$gameObjects[object].objectType+" and type:"+$gameObjects[object].objecttype)
 		}	
@@ -263,24 +242,26 @@ function gameTick() {
 //}
 
 //{ StarSpar
+
 $http.createServer(function (request, response) {
 	response.setHeader('Access-Control-Allow-Origin', "*")
+	
 	try {
 if (request.method == "GET") {
-	writeLog(request.method +" request from address:" + request.connection.remoteAddress + " on path: "+request.connection.remotePort+" for path " + request.url)
+	writeLog(request.method +" request from address:" + request.connection.remoteAddress + " on port: "+request.connection.remotePort+" for path " + request.url)
 
 	sparational.html("starspar.gilgamech.com",function($callback) {
 		response.end($callback) 
 	})
 
 } else if (request.method == "POST") {
-    if (request.url.indexOf("starspar?") > 0) {//starspar from starspar
+    if (request.url.indexOf("starspar?") > 0) {
 	var inputPacket = request.url.split("starspar?")[1].split("&")
 	var $user = inputPacket[0].split("=")[1]
 	var $sessionID = inputPacket[1].split("=")[1]
 	var $sessionKey = inputPacket[2].split("=")[1]
 	$sessionID = $sessionID.replace(/;/g,"")
-// Receive player keystrokes
+	// Receive player keystrokes
 	var player = JSON.parse(inputPacket[3].split("=")[1].replace(/~~/g,"#").replace(/%20/g,'').replace(/%22/g,'"'))
 
 	//game tick and save
@@ -300,20 +281,27 @@ if (request.method == "GET") {
 	then = now;
 
 	if($gameObjects.filter(o => {return o.objectname == player.objectname}).length <=0){
+		//If the player isn't in the gameObjects list, add them.
 	}
 	
 	var $returnGameObjects
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
+		//If the player doesn't know their location, throw them randomly on the map somewhere.
+		//Send back all player locations, so they can find themselves if they're in the list.
 		$returnGameObjects = $gameObjects.filter(o => {return o.objecttype == 'player'})
 		$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'npc'}))
 	} else {//if player.x and player.y are known
 	
+		//Keep them within the bounds of the $gameData.map.
 		if (player.x <= 0){player.x = 0}
 		if (player.y <= 0){player.y = 0}
 		if (player.x >= $gameData.map.x){player.x = $gameData.map.x}
 		if (player.y >= $gameData.map.y){player.y = $gameData.map.y}
 
-			//Update player location, if it's not too far away.
+		//Add projectiles if  mouse clicked.
+			//clickCheck prevents click-holding and reliably ensures one-projectile-per-click.
+		}//end clickCheck
+		
 		var object = $gameObjects.filter(o => {return o.objectname == $user})[0]
 		//add objectID if missing
 		if (typeof object.id == 'undefined'){object.id = ($gameObjects.length)}
@@ -328,6 +316,21 @@ if (request.method == "GET") {
 		} else {
 			console.log("Player at x:"+player.x+" y:"+player.y+" but server has x:"+object.locx+" y:"+object.locy)
 			
+		
+		//Describe player's newWindow on the map as centered on their player location.
+		//newWindow's upper left corner (minimum) is the player location minus half the newWindow size.
+		//newWindow's lower right corner (maximum) is the player location plus half the newWindow size.
+		//Describe player's oldWindow on the map as centered on their player location.
+		//oldWindow's upper left corner (minimum) is the object location minus half the oldWindow size.
+		//oldWindow's lower right corner (maximum) is the object location plus half the oldWindow size.
+		
+		//Send back everything except players inside the player's newWindow...
+		
+		//that was outside of the oldWindow
+		
+		//- unless it has updatelocation  == 1
+		
+		//Push active players onto whatever we're returning.
 		}
 	
 	if (player.mouseClicked == true && $clickCheck == false){
@@ -339,10 +342,11 @@ if (request.method == "GET") {
 	$returnGameObjects = $gameObjects.filter(o => {return o.locx > player.x-2000}).filter(o => {return o.locx < player.x+2000}).filter(o => {return o.locy > player.y-2000}).filter(o => {return o.locy < player.y+2000}).filter(o => {return o.ticksremaining >= 0})
 	$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'player'}))
 	$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'npc'}))
-	
+		//Push current player
+		
 	} // end if player.x and player.y
 	
-	var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey 
+	var $keyCallback = ""+$user+":" + $sessionID +":" + $sessionKey
 	response.end($keyCallback+":gameObjects:"+JSON.stringify($returnGameObjects)+":gameData:"+JSON.stringify($gameData))
 
 	} else {
