@@ -1,7 +1,7 @@
 //StarSpar server file.
 //(c) 2019 Gilgamech Technologies
 var $gameData = {};
-$gameData.ver = 346
+$gameData.ver = 384
 
 //{ Init vars
 var $http = require("http");
@@ -12,15 +12,23 @@ var $hostName = (process.env.HOST || "localhost:"+$servicePort);
 sparational.starspar = new sparational.Sequelize(process.env.STARSPAR_DATABASE_URL || 'postgres://postgres:dbpasswd@127.0.0.1:5432/postgres', {logging: false});
 sparational.sequelize = new sparational.Sequelize(process.env.LOGGING_DATABASE_URL || 'postgres://postgres:dbpasswd@127.0.0.1:5432/postgres', {logging: false});
 
-var demon = {};
+$gameData.map = {}
+$gameData.map.x = 10000
+$gameData.map.y = 10000
+$gameData.map.name = 'noob'
+$gameData.map.player = {}
+$gameData.map.playermove = 320
+$gameData.map.projectile = {}
+$gameData.map.projectile.move = 3
+$gameData.map.npc = {}
+$gameData.map.npc.demon = {}
+$gameData.map.npc.demon.hp = 20
+$gameData.map.npc.demon.spawnrate = 20
+$gameData.map.drop = {}
+$gameData.map.drop.block = {}
+$gameData.map.drop.block.hp = 50
+$gameData.map.drop.block.spawnrate = 1
 
-var map = {};
-map.x = 10000
-map.y = 10000
-map.name = 'noob'
-map.playerMoveSpeed = 320
-
-projectileSpeed = 3;
 
 //How fast the game should update.
 var $ticksPerSecond = 10
@@ -99,9 +107,8 @@ function gameSave() {
 
 function moveObject(object) {
 	if (object.locx < object.ammo) { 
-		object.locx = object.locx + projectileSpeed
+		if (object.locx > object.ammo-$gameData.map.projectile.move) {
 	} else if (object.locx > object.ammo) { 
-		object.locx = object.locx - projectileSpeed
 	} 
 	if (object.locy < object.score) { 
 		object.locy = object.locy + projectileSpeed
@@ -303,16 +310,19 @@ if (request.method == "GET") {
 	
 		if (player.x <= 0){player.x = 0}
 		if (player.y <= 0){player.y = 0}
-		if (player.x >= map.x){player.x = map.x}
-		if (player.y >= map.y){player.y = map.y}
+		if (player.x >= $gameData.map.x){player.x = $gameData.map.x}
+		if (player.y >= $gameData.map.y){player.y = $gameData.map.y}
 
 			//Update player location, if it's not too far away.
 		var object = $gameObjects.filter(o => {return o.objectname == $user})[0]
-		object.ticksremaining = 100;
-		if (player.x <= (object.locx + map.playerMoveSpeed)
-		&& object.locx <= (player.x + map.playerMoveSpeed)
-		&& player.y <= (object.locy + map.playerMoveSpeed)
-		&& object.locy <= (player.y + map.playerMoveSpeed)) {
+		//add objectID if missing
+		if (typeof object.id == 'undefined'){object.id = ($gameObjects.length)}
+		
+		//Update player location, if it's not too far away.
+		if (player.x <= (object.locx + $gameData.map.player.move)
+		&& object.locx <= (player.x + $gameData.map.player.move)
+		&& player.y <= (object.locy + $gameData.map.player.move)
+		&& object.locy <= (player.y + $gameData.map.player.move)) {
 			object.locx = player.x;
 			object.locy = player.y;
 		} else {
@@ -353,7 +363,13 @@ if (request.method == "GET") {
 //}
 
 //{ Run Once
-writeLog($serviceName + ' version '+$gameData.ver+' is running on port ' + $servicePort);
 console.log($serviceName + ' version '+$gameData.ver+' is running on port ' + $servicePort);
+
+process.on('SIGTERM', function () {
+    server.close( function () {
+		gameSave()
+		process.exit(0);
+	});
+});
 //}
 
