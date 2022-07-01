@@ -316,12 +316,12 @@ if (request.method == "GET") {
 	$gameSave += delta;
 	if ($gameSave > $saveDelay) {
 		console.log("Game Save "+$gameSave+" delay "+$saveDelay)
-		$gameSave -= $saveDelay;
+		$gameSave = $gameSave % $saveDelay;
 		gameSave();
 	}
 	$gameTick += delta;
 	if ($gameTick > $tickDelay) {
-		$gameTick -= $tickDelay;
+		$gameTick = $gameTick % $tickDelay;
         gameTick();
 	}
 	then = now;
