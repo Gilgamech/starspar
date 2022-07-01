@@ -82,7 +82,7 @@ function writeLog($msg) {
 };
 
 function addObject(objectname,mapname,locx,locy,hp,ammo,score,ticksremaining,objectowner,updatelocation,objecttype) {
-	$gameObjects.push({'objectname':objectname,'mapname':mapname,'locx':locx,'locy':locy,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectowner':objectowner,'updatelocation':1,'objecttype':objecttype})
+	var id = ($gameObjects.length);
 	if (objecttype == 'projectile') {
 		var shooter = $gameObjects.filter(o => {return o.objectname == objectowner})[0]
 		if (shooter.ammo > 0) {
@@ -90,7 +90,9 @@ function addObject(objectname,mapname,locx,locy,hp,ammo,score,ticksremaining,obj
 			shooter.ammo--
 			$gameObjects.push({'id':id,'objectname':objectname,'mapname':mapname,'locx':locx,'locy':locy,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectowner':objectowner,'updatelocation':1,'objecttype':objecttype})
 		}
+	}else{
 	//Spawn the object
+		$gameObjects.push({'id':id,'objectname':objectname,'mapname':mapname,'locx':locx,'locy':locy,'hp':hp,'ammo':ammo,'score':score,'ticksremaining':ticksremaining,'objectowner':objectowner,'updatelocation':1,'objecttype':objecttype})
 	}
 };
 
@@ -169,6 +171,8 @@ function gameTick() {
 	$gameObjects = $gameObjects.filter(o => {return o.hp > 0}).filter(o => {return o.objecttype})
 	
 	for (object in $gameObjects) {
+	$gameObjects[object].updatelocation = 0
+	if (typeof $gameObjects[object].id == 'undefined'){$gameObjects[object].id = $gameObjects.length}
 	//Handle all with HP above zero
 		if ($gameObjects[object].objecttype == 'projectile') { //if projectile
 			//If collides with:
@@ -188,8 +192,10 @@ function gameTick() {
 			$gameObjects[object].hp--
 			moveObject($gameObjects[object])
 		}else if ($gameObjects[object].objecttype == 'player') { //if player
-			$gameObjects[object].ticksremaining--
 			//Keep them from getting too much HP or ammo.
+			if ($gameObjects[object].hp > 100) {$gameObjects[object].hp = 100}
+			if ($gameObjects[object].ammo > 100) {$gameObjects[object].ammo = 100}
+			if ($gameObjects[object].ticksremaining > 0) {$gameObjects[object].ticksremaining--}
 			
 			//If collides with:
 			var notBlockObjects = $gameObjects.filter(o => {return o.locx <= $gameObjects[object].locx+hitBox}).filter(o => {return o.locx >= $gameObjects[object].locx -hitBox}).filter(o => {return o.locy <= $gameObjects[object].locy+hitBox}).filter(o => {return o.locy >= $gameObjects[object].locy -hitBox}).filter(o => {return o.objecttype != 'block'})
@@ -320,12 +326,10 @@ if (request.method == "GET") {
 		//If the player isn't in the gameObjects list, add them.
 	}
 	
-	var $returnGameObjects
 	if (typeof player.x == "undefined" || typeof player.y == "undefined" ) {
 		//If the player doesn't know their location, throw them randomly on the map somewhere.
 		//Send back all player locations, so they can find themselves if they're in the list.
 		$returnGameObjects = $gameObjects.filter(o => {return o.objecttype == 'player'})
-		$returnGameObjects.push($gameObjects.filter(o => {return o.objecttype == 'npc'}))
 	} else {//if player.x and player.y are known
 	
 		//Keep them within the bounds of the $gameData.map.
