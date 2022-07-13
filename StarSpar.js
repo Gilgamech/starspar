@@ -68,6 +68,7 @@ s3.getObject(getParams, function (err, data) {
 		}// reindex input.
 		//Filter out misplaced blocks.
 		$gameObjects = $gameObjects.filter(o => {return o.objecttype == "block"}).filter(o => {return o.locx % 40 == 0}).filter(o => {return o.locy % 40 == 0})
+		//$gameObjects = $gameObjects.filter(o => {return o.locX % 20 = 0})
 		console.log('Reindexing complete - indexed '+$gameObjects.length+' game objects');
         console.log("gameObjects test data: "+JSON.stringify($gameObjects[0])); //this will log data to console
     }
@@ -367,6 +368,7 @@ if (request.method == "GET") {
 			object.updatelocation = player.updatelocation;
 		} else {
 			object.updatelocation = 1
+			//console.log("Player at x:"+player.x+" y:"+player.y+" but server has x:"+object.locx+" y:"+object.locy)
 		}//end update player location.
 		
 		//Describe player's newWindow on the map as centered on their player location.
