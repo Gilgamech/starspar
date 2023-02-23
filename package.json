@@ -2,23 +2,14 @@
   "name": "starspar",
   "version": "0.0.1",
   "description": "A fun HTML5 game",
-  "engines": {
-    "node": "6.11.1"
-  },
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "test": "node test.js"
   },
   "dependencies": {
-    "aws-sdk": "^2.583.0",
-    "pg": "^7.12.1",
-    "sequelize": "5.21.1",
-    "sparational": "1.1.8"
   },
   "devDependencies": {
-    "request": "^2.81.0",
-    "tape": "^4.7.0"
   },
   "repository": {
     "type": "git",
@@ -26,9 +17,9 @@
     "email": "starspar@Gilgamech.com"
   },
   "keywords": [
-    "node",
-    "heroku",
-    "express"
+    "starspar",
+    "game",
+    "fun"
   ],
-  "license": "IDGAF"
+  "license": "GPL v3"
 }
